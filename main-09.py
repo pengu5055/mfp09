@@ -33,11 +33,11 @@ if __name__ == "__main__":
     # writervideo = FFMpegWriter(fps=20) 
     # ani.save("sweep.mp4", writer=writervideo)
 
-    sol = V_euler_integrator(ivp_1, 5, t)
+    sol = V_euler_integrator(ivp_1, init, t)
     true = 2 * np.exp(-2*t) + np.exp(t)
 
-    plt.plot(t, sol, label="Calculated")
-    plt.plot(t, true, label="Exact")
+    plt.plot(t, sol[0], label="Calculated")
+    plt.plot(t, true)
     plt.show()
     
     

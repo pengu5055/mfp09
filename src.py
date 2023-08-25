@@ -58,12 +58,11 @@ def V_euler_integrator(f, init_cond, t_points):
     n = len(t_points)
     k = np.average(t_points[1]-t_points[0])
 
-    values = np.array([])
+    values = np.zeros_like(init_cond)
     y0 = init_cond
 
-    for t in range(n):
+    for t in range(n - 1):
         yn = y0 + k * f(y0, t_points[t])
-        
         values = np.column_stack((values, yn))
         y0 = yn
     
