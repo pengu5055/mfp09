@@ -6,20 +6,23 @@ example heat diffusion in one dimension.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from scipy.integrate import RK45
+from tqdm import tqdm
+from matplotlib.animation import FuncAnimation, FFMpegWriter
+
 
 
 # --- Simulation Parameters ---
 LAMBDA = 100
 RHO = 1000
-A = 5
 SIGMA = 1
 C = 200
-k = 0.01
-N = 1000  # Samples
-T = 1/100  # Sample frequency
+N = 10000  # Samples
+T = 1/1000  # Sample frequency
 a = N*T
-# --- --------------------- ---
+# ---  Physical Parameters  ---
+D_Al = 9.7e-5  # Thermal diffusivity of Aluminum
+D_Cu = 1.1e-4  # Thermal diffusivity of Copper
+# -----------------------------
 
 def euler_integrator(f, init_cond, t_points):
     """Perform Euler integration for a given ODE.
@@ -49,7 +52,7 @@ def euler_integrator(f, init_cond, t_points):
     return values
 
 
-def V_euler_integrator(f, init_cond, t_points):
+def V_euler_integrator(f, init_cond, t_points, *args):
     """Perform Euler integration for a given ODE but is vectorized.
 
     Parameters:
@@ -67,8 +70,8 @@ def V_euler_integrator(f, init_cond, t_points):
     values = np.zeros_like(init_cond)
     y0 = init_cond
 
-    for t in range(n - 1):
-        yn = y0 + k * f(y0, t_points[t])
+    for t in tqdm(range(n - 1), total = n, desc ="Integration progress: "):
+        yn = y0 + k * f(y0, t_points[t], *args)
         values = np.column_stack((values, yn))
         y0 = yn
     
@@ -113,20 +116,48 @@ def evolve_FFT_T(init_cond, time_points, suppressWarning=False):
     return values
 
 
-def spectral_PDE_solver(init_cond, suppressWarning=False):
-    t = np.linspace(0, a, N)
+def spectral_solver_Heat1D(init_cond, t_points, gaussian=False):
     freq = np.fft.fftfreq(N, T)
-    init_FFT = np.fft.fft(init_cond) * gaussian_FFT_corr(freq)
-
-    # evolution = V_euler_integrator(T_evol_step, init_FFT, t)
-    evolution = init_FFT
-    # Make evolution the same shape as V_euler_integrator would give
-    # So in this case (1000, 1000)
-    evolution = np.tile(evolution, (N, 1))
     
-    results = 1/N * np.fft.fftshift(np.fft.ifft(evolution))
+    # Get Fourier coefficients
+    if gaussian:
+        T_hat_k = np.fft.fft(init_cond) * gaussian_FFT_corr(freq)
+    else:
+        T_hat_k = np.fft.fft(init_cond) 
+
+    # Get wavenumbers
+    k = 2 * np.pi * np.fft.fftfreq(N, T)
+
+    # Debug plot of the Fourier coefficients
+    plt.plot(freq, np.abs(T_hat_k), label="Fourier Coefficients")
+    plt.xlabel(r'$freq$')
+    plt.ylabel(r'$\hat{T}$')
+    plt.legend()
+    plt.show()
+
+    evolution = V_euler_integrator(T_evolve, T_hat_k, t_points, k)
+
+
+    results = 1/N * np.fft.ifftshift(np.fft.ifft(evolution, axis=1), axes=1)
 
     return results
+
+
+def T_evolve(T_hat_k, t, k):
+    """Evolve the temperature distribution in time.
+
+    This is done by evolving the Fourier coefficients in time.
+
+    Args:
+        T_hat_k: The Fourier Coefficients.
+        t: The time at which to evaluate the evolution.
+
+    Return:
+        Differential equation of the evolution.
+    """
+    # D = LAMBDA/(RHO * C)
+    D = D_Al
+    return - D * k**2 * T_hat_k
 
 
 def gaussian_FFT_corr(freq):
@@ -136,15 +167,12 @@ def gaussian_FFT_corr(freq):
 def gaussian(x, a, sigma):
     return np.exp(-((-x+a)/2)**2 / sigma**2)
 
-
-def T_init(x, t, a=0, sigma=1):
-    return gaussian(x, a, sigma)
-
-
-def T_evol_step(x, t):
-    D = LAMBDA/(RHO * C)
-    f_k = k / a
-    return  D * (-4 * np.pi**2 * f_k**2) * x
+# Is this correct? I'm assuming that this could be the source of 
+# the error. I'm not sure if the derivative is correct.
+# def T_evol_step(x, t):
+#     D = LAMBDA/(RHO * C)
+#     f_k = k / a
+#     return  D * (-4 * np.pi**2 * f_k**2) * x
 
 
 def plot3D(x_vector, t_vector, evolution):
@@ -161,4 +189,20 @@ def plot3D(x_vector, t_vector, evolution):
     ax.set_zlabel(r'$T$')
     plt.show()
 
+def plotAnimation(x, evolve):
+    def update(frame):
+        new_step = evolve[frame, :]
+        line.set_data(x, new_step)
+
+        return line,
+
+    fig, ax = plt.subplots()
+    line = ax.plot(x, evolve[0], label="Evolved")[0]
+ 
+    ani = FuncAnimation(fig, update, frames=range(N), blit=True,)
+    plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
+    writervideo = FFMpegWriter(fps=20) 
+    # ani.save("sweep.mp4", writer=writervideo)
+    
+    plt.show()
 

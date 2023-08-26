@@ -5,14 +5,8 @@ Results are to be plotted with matplotlib.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation, FFMpegWriter
 from src import *
 
-
-def update(frame):
-    new_step = evolve[frame, :]
-    line.set_data(x, new_step)
-    return line,
 
 def ivp_1(y, t):
     """Test IVP to try out integrators.
@@ -24,24 +18,18 @@ def ivp_1(y, t):
 
 if __name__ == "__main__":
     x = np.linspace(0, 10, N)
-    t = np.linspace(0, 20, N)
-    init = gaussian(x, A, SIGMA)
+    t = np.linspace(0, 1, N)
 
+    # Let's try an easier initial condition, perhaps a box function
+    # init = np.zeros(N)
+    # init[(N//2 - 100):(N//2 + 100)] = 1
 
-    evolve = spectral_PDE_solver(init)
+    # Even simpler initial conditions. Just a sine wave. 
+    freq = 2
+    init = np.sin(2*np.pi*x*freq)
+
+    evolve = spectral_solver_Heat1D(init, t)
 
     plot3D(x, t, evolve)
-
-    fig, ax = plt.subplots()
-    line = ax.plot(x, evolve[0], label="Evolved")[0]
- 
-    ani = FuncAnimation(fig, update, frames=range(N), blit=True,)
-    plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
-    writervideo = FFMpegWriter(fps=20) 
-    # ani.save("sweep.mp4", writer=writervideo)
-    
-    plt.show()
-    
-    
 
     
