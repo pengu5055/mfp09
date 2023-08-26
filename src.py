@@ -16,7 +16,7 @@ LAMBDA = 100
 RHO = 1000
 SIGMA = 1
 C = 200
-N = 10000  # Samples
+N = 1000  # Samples
 T = 1/1000  # Sample frequency
 a = N*T
 # ---  Physical Parameters  ---
@@ -128,19 +128,23 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False):
     # Get wavenumbers
     k = 2 * np.pi * np.fft.fftfreq(N, T)
 
-    # Debug plot of the Fourier coefficients
-    plt.plot(freq, np.abs(T_hat_k), label="Fourier Coefficients")
-    plt.xlabel(r'$freq$')
-    plt.ylabel(r'$\hat{T}$')
-    plt.legend()
-    plt.show()
+    # evolution = V_euler_integrator(T_evolve, T_hat_k, t_points, k)
+    evolution = T_hat_k
+    # Make evolution the same shape as output of V_euler_integrator (1000, 1000)
+    evolution = np.tile(T_hat_k, (N, 1))
+    
+    results = np.zeros_like(init_cond)
 
-    evolution = V_euler_integrator(T_evolve, T_hat_k, t_points, k)
+    # For sanity's sake lets do the inverse transform column by column
+    for evolved in evolution:
+        evolved = (np.fft.ifft(evolved)) # 1/N *
+        results = np.column_stack((results, evolved))
 
+    # Remove the first column of zeros
+    results = np.delete(results, 0, 1)       
 
-    results = 1/N * np.fft.ifftshift(np.fft.ifft(evolution, axis=1), axes=1)
-
-    return results
+    # Return the transpose so x is the first axis and t is the second
+    return results.T
 
 
 def T_evolve(T_hat_k, t, k):
