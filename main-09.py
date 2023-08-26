@@ -1,3 +1,8 @@
+"""
+This is the main script for solving PDE's via spectral methods.
+Functions should be called from src.py and executed here.
+Results are to be plotted with matplotlib.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
@@ -19,25 +24,22 @@ def ivp_1(y, t):
 
 if __name__ == "__main__":
     x = np.linspace(0, 10, N)
-    t = np.linspace(0, 10, N)
+    t = np.linspace(0, 20, N)
     init = gaussian(x, A, SIGMA)
 
 
-    # evolve = N * spectral_PDE_solver(init, suppressWarning=True)
+    evolve = spectral_PDE_solver(init)
 
-    # fig, ax = plt.subplots()
-    # line = ax.plot(x, evolve[0], label="Evolved")[0]
-# 
-    # ani = FuncAnimation(fig, update, frames=range(N), blit=True,)
-    # plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
-    # writervideo = FFMpegWriter(fps=20) 
+    plot3D(x, t, evolve)
+
+    fig, ax = plt.subplots()
+    line = ax.plot(x, evolve[0], label="Evolved")[0]
+ 
+    ani = FuncAnimation(fig, update, frames=range(N), blit=True,)
+    plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
+    writervideo = FFMpegWriter(fps=20) 
     # ani.save("sweep.mp4", writer=writervideo)
-
-    sol = V_euler_integrator(ivp_1, init, t)
-    true = 2 * np.exp(-2*t) + np.exp(t)
-
-    plt.plot(t, sol[0], label="Calculated")
-    plt.plot(t, true)
+    
     plt.show()
     
     

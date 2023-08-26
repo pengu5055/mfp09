@@ -1,7 +1,13 @@
+"""
+This is a source script for solving PDE's via spectral methods.
+It should contain all the required functions to be able to solve for 
+example heat diffusion in one dimension.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from scipy.integrate import RK45
+
 
 # --- Simulation Parameters ---
 LAMBDA = 100
@@ -109,13 +115,15 @@ def evolve_FFT_T(init_cond, time_points, suppressWarning=False):
 
 def spectral_PDE_solver(init_cond, suppressWarning=False):
     t = np.linspace(0, a, N)
-    frequencies = np.fft.fftfreq(N, T)
+    freq = np.fft.fftfreq(N, T)
+    init_FFT = np.fft.fft(init_cond) * gaussian_FFT_corr(freq)
 
-    init_FFT = np.fft.fft(init_cond) * gaussian_FFT_corr(frequencies)
-
-    # evolution = evolve_FFT_T(init_FFT_norm, t, suppressWarning=suppressWarning)
-    evolution = RK45(T_evol_step, 0, init_FFT, 10)
-
+    # evolution = V_euler_integrator(T_evol_step, init_FFT, t)
+    evolution = init_FFT
+    # Make evolution the same shape as V_euler_integrator would give
+    # So in this case (1000, 1000)
+    evolution = np.tile(evolution, (N, 1))
+    
     results = 1/N * np.fft.fftshift(np.fft.ifft(evolution))
 
     return results
@@ -148,9 +156,9 @@ def plot3D(x_vector, t_vector, evolution):
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
 
-    ax.set_xlabel('X')
-    ax.set_ylabel('t')
-    ax.set_zlabel('T')
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$t$')
+    ax.set_zlabel(r'$T$')
     plt.show()
 
 
