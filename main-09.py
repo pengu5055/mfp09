@@ -34,10 +34,8 @@ if __name__ == "__main__":
     # a superposition of gaussians modulated by a sine wave
     # init = np.sin(2*np.pi*x*freq) * gaussian(x, 2, 0.2) + np.sin(2*np.pi*x*freq*2) * gaussian(x, 8, 0.3) + np.sin(2*np.pi*x*freq*3) * gaussian(x, 1, 0.1)
 
-
-
     evolve = spectral_solver_Heat1D(init, t)
 
-    plot3D(x, t, evolve)
+    # plot3D(x, t, evolve)
 
     

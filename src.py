@@ -6,7 +6,7 @@ example heat diffusion in one dimension.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from tqdm import tqdm
+from progressbar import ProgressBar
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 
 
@@ -17,40 +17,14 @@ RHO = 1000
 SIGMA = 1
 C = 200
 N = 1000  # Samples
-T = 1/1000  # Sample frequency
+T = 1/100  # Sample frequency
 a = N*T
 # ---  Physical Parameters  ---
 D_Al = 9.7e-5  # Thermal diffusivity of Aluminum
 D_Cu = 1.1e-4  # Thermal diffusivity of Copper
+# D = LAMBDA/(RHO * C)
+D = D_Al
 # -----------------------------
-
-def euler_integrator(f, init_cond, t_points):
-    """Perform Euler integration for a given ODE.
-
-    Parameters:
-        f: The derivative function of the ODE.
-        init_cond: The initial state of the system.
-        time_points: A list of time points at which to compute
-        the solution.
-
-    Returns:
-        values: A list of solutions corresponding to the given time points.
-    """
-    n = len(t_points)
-    k = t_points[1]-t_points[0]
-
-    values = np.array([])
-    y0 = init_cond
-
-    for t in range(n):
-        yn = y0 + k * f(y0, t_points[t])
-        
-        # values = np.column_stack((values, yn))
-        values = np.append(values, yn)
-        y0 = yn
-    
-    return values
-
 
 def V_euler_integrator(f, init_cond, t_points, *args):
     """Perform Euler integration for a given ODE but is vectorized.
@@ -78,42 +52,37 @@ def V_euler_integrator(f, init_cond, t_points, *args):
     return values
 
 
-
-def evolve_FFT_T(init_cond, time_points, suppressWarning=False):
-    """Perform Euler integration for spectral method of solving PDE.
-    Specifically in this case it solves heat diffusion.
-
-    Args:
-        init_cond: The initial state of the system.
-        time_points: A list of time points at which to compute
-        the solution.
+def euler_integrator(f, y0, t_points, *args):
+    """Perform Euler integration for a given ODE.
 
     Parameters:
-        suppressWarning: If True, will not warn about integration scheme stability.
+        f: The derivative function of the ODE.
+        y0: The initial state of the system.
+        time_points: A list of time points at which to compute
+        the solution.
 
     Returns:
         values: A list of solutions corresponding to the given time points.
     """
+    # Step size parameter to be adjusted for accuracy
+    k = 0.01
+    print(f"Solving with step size {k}.")
 
-    values = np.asarray(init_cond)
-    current_state = init_cond
+    values = []
+    y = y0
 
-    for id_t, t in enumerate(time_points[1:]):
-        dt = t - time_points[id_t]
-        step = dt * T_evol_step(current_state, t)
-        current_state = current_state + step
+    with ProgressBar(marker='I', max_value=len(t_points)) as bar:
+        for prog, t in enumerate(t_points):
+            yn = y + k * f(y, t, *args)
+            values.append(yn)
+            y = yn
+            bar.update(prog)
 
-        if not suppressWarning:
-            # Stability check
-            if np.abs(step.any()) < 1:
-                values = np.column_stack((values, current_state))
-            else:
-                raise UserWarning(f"Euler unstable in step indexed: {id_t}\nValue: {np.abs(step)}")
-        else:
-            values = np.column_stack((values, current_state))
-
+    # Delete first column in y
+    # values = np.delete(values, 0, 1)
     
-    return values
+    return np.array(values)
+
 
 
 def spectral_solver_Heat1D(init_cond, t_points, gaussian=False):
@@ -128,10 +97,14 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False):
     # Get wavenumbers
     k = 2 * np.pi * np.fft.fftfreq(N, T)
 
-    # evolution = V_euler_integrator(T_evolve, T_hat_k, t_points, k)
-    evolution = T_hat_k
+    evolution = euler_integrator(T_evolve, T_hat_k, t_points, k)
+
+    # DEBUG plot the fourier coefficients of the evolution
+    plt.plot(freq, np.abs(evolution[:, 0]))
+    plt.show()
+
     # Make evolution the same shape as output of V_euler_integrator (1000, 1000)
-    evolution = np.tile(T_hat_k, (N, 1))
+    # evolution = np.tile(T_hat_k, (N, 1))
     
     results = np.zeros_like(init_cond)
 
@@ -142,6 +115,12 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False):
 
     # Remove the first column of zeros
     results = np.delete(results, 0, 1)       
+
+    # DEBUG plot the evolution and the initial condition
+    plt.plot(init_cond, label="Initial condition")
+    plt.plot(results[:, 0], label="Evolved")
+    plt.legend()
+    plt.show()
 
     # Return the transpose so x is the first axis and t is the second
     return results.T
@@ -159,8 +138,6 @@ def T_evolve(T_hat_k, t, k):
     Return:
         Differential equation of the evolution.
     """
-    # D = LAMBDA/(RHO * C)
-    D = D_Al
     return - D * k**2 * T_hat_k
 
 
@@ -170,13 +147,6 @@ def gaussian_FFT_corr(freq):
 
 def gaussian(x, a, sigma):
     return np.exp(-((-x+a)/2)**2 / sigma**2)
-
-# Is this correct? I'm assuming that this could be the source of 
-# the error. I'm not sure if the derivative is correct.
-# def T_evol_step(x, t):
-#     D = LAMBDA/(RHO * C)
-#     f_k = k / a
-#     return  D * (-4 * np.pi**2 * f_k**2) * x
 
 
 def plot3D(x_vector, t_vector, evolution):
