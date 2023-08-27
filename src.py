@@ -272,24 +272,43 @@ def plot3D(x_vector, t_vector, evolution):
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
 
+    ax.set_title("Time evolution of the temperature distribution")
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$t$')
     ax.set_zlabel(r'$T$')
+    ax.grid(color="#c1d0d4", alpha=0.3)
     plt.show()
 
-def plotAnimation(x, evolve):
+def plotAnimation(x, solution, saveVideo=False, fps=20):
+    """Plot the time evolution of the temperature distribution.
+
+    Arguments:
+        x: The x-axis.
+        solution: The solution to be plotted.
+
+    Parameters:
+        saveVideo: Whether or not to save the animation as a video.
+        fps: Frames per second of the video.
+    """
     def update(frame):
-        new_step = evolve[frame, :]
+        new_step = solution[frame, :]
         line.set_data(x, new_step)
 
         return line,
 
     fig, ax = plt.subplots()
-    line = ax.plot(x, evolve[0], label="Evolved")[0]
- 
-    ani = FuncAnimation(fig, update, frames=range(N), blit=True,)
+    line = ax.plot(x, solution[0], label="Evolved", color="#f79ec6")[0]
+    
+    ani = FuncAnimation(fig, update, frames=range(N), blit=True, interval=1/fps)
     plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
     writervideo = FFMpegWriter(fps=20) 
-    # ani.save("sweep.mp4", writer=writervideo)
+
+    ax.grid(color="#c1d0d4", alpha=0.3)
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$T$')
+    ax.set_title("Time evolution of the temperature distribution")
+    ax.legend()
+    if saveVideo:
+        ani.save("sweep.mp4", writer=writervideo, fps=fps)
     
     plt.show()

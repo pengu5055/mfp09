@@ -6,21 +6,10 @@ import matplotlib.pyplot as plt
 from src import *
 
 
-# Test the integrator
+t = np.linspace(0, 10, N)
+x = np.linspace(0, 10, N)
+init = gaussian(x, 5, 0.1)
 
-def ivp_1(y, t):
-    """Test IVP to try out integrators.
-    Has the analytical solution 2 * np.exp(-2*t) + np.exp(t)
-    for y(0) = 5
-    """
-    return -2*y + 3 * np.exp(t)
+solution = spectral_solver_Heat1D(init, t)
 
-t = np.linspace(0, 10, 1000)
-init = np.full(len(t), 5)
-test = euler_integrator(ivp_1, init, t)
-analytical = 2 * np.exp(-2*t) + np.exp(t)
-
-plt.plot(t, test, label = "Euler")
-plt.plot(t, analytical, label = "Analytical")
-plt.legend()
-plt.show()
+plotAnimation(x, solution)
