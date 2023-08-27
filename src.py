@@ -193,6 +193,45 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
     return results.T
 
 
+def MPI_Heat1D(init_cond, t_points, gaussian=False, debug=False):
+    """
+    Higher level function that contains all necessary function calls
+    to solve the 1D heat equation using spectral method with MPI.
+
+    Args:
+        init_cond: The initial condition of the system.
+        t_points: A list of time points at which to compute
+        the solution.
+
+    Parameters:
+        gaussian: Whether or not to use a gaussian correction for the FFT
+        (semi-deprecated).
+        debug: Whether or not to plot debug plots. Only supported on rank 0.
+
+    Raises:
+        ValueError: If the rank is not 0 and debug is True.
+
+    Returns:
+        full_solution: Full solution of the system.
+    """
+    # Split the initial condition into equal chunks per rank
+    init_assigned = splitter_distributer(init_cond)
+
+    # Solve the problem
+    if rank != 0:
+        solution = spectral_solver_Heat1D(init_assigned, t_points)
+    elif rank == 0:
+        solution = spectral_solver_Heat1D(init_assigned, t_points, debug=False)
+
+    # Gather the solutions from each rank
+    if rank != 0:
+        full_solution = solution_accumulator(solution)
+    elif rank == 0:
+        full_solution = solution_accumulator(solution, isRoot=True)
+    
+    return full_solution
+
+
 def T_evolve(T_hat_k, t, k):
     """Evolve the temperature distribution in time.
 
@@ -214,6 +253,14 @@ def gaussian_FFT_corr(freq):
 
 def gaussian(x, a, sigma):
     return np.exp(-((-x+a)/2)**2 / sigma**2)
+
+
+def ivp_1(y, t):
+    """Test IVP to try out integrators.
+    Has the analytical solution 2 * np.exp(-2*t) + np.exp(t)
+    for y(0) = 5
+    """
+    return -2*y + 3 * np.exp(t)
 
 
 def plot3D(x_vector, t_vector, evolution):

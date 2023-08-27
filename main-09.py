@@ -8,14 +8,6 @@ import matplotlib.pyplot as plt
 from src import *
 
 
-def ivp_1(y, t):
-    """Test IVP to try out integrators.
-    Has the analytical solution 2 * np.exp(-2*t) + np.exp(t)
-    for y(0) = 5
-    """
-    return -2*y + 3 * np.exp(t)
-
-
 if __name__ == "__main__":
     x = np.linspace(0, 10, N)
     t = np.linspace(0, 1, N)
@@ -36,27 +28,8 @@ if __name__ == "__main__":
 
     hello_Rank(rank)
 
-    # Split the temporal domain into equal chunks per rank
-    t = np.linspace(0, 10, N)
-
-    # Split the initial condition into equal chunks per rank
-    init_assigned = splitter_distributer(init)
-
-    # Solve the problem
-    if rank != 0:
-        solution = spectral_solver_Heat1D(init_assigned, t)
-    elif rank == 0:
-        solution = spectral_solver_Heat1D(init_assigned, t, debug=False)
-
-    print(f"Solution shape {solution.shape}")
-
-    # Gather the solutions from each rank
-    if rank != 0:
-        full_solution = solution_accumulator(solution)
-    elif rank == 0:
-        full_solution = solution_accumulator(solution, isRoot=True)
-        print(full_solution.shape)
-
+    # --- 1D Heat Equation ---
+    full_solution = MPI_Heat1D(init, t)
     if rank == 0:
         plot3D(x, t, full_solution)
         plt.show()
