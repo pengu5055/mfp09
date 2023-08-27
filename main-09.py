@@ -10,7 +10,7 @@ from src import *
 
 if __name__ == "__main__":
     x = np.linspace(0, 10, N)
-    t = np.linspace(0, 10, N)
+    t = np.linspace(0, 20, N)
 
     # Even simpler initial conditions. Just a sine wave. 
     freq = 10
@@ -21,22 +21,19 @@ if __name__ == "__main__":
     # init = np.zeros(N)
     # init[(N//2 - 100):(N//2 + 100)] = 1
     # Hard initial condition, a gaussian
-    init = gaussian(x, 5, 0.1)
+    # init = gaussian(x, 5, 1)
     # Very hard initial conditions (not really), 
     # a superposition of gaussians modulated by a sine wave
-    # init = np.sin(2*np.pi*x*freq) * gaussian(x, 2, 0.2) + np.sin(2*np.pi*x*freq*2) * gaussian(x, 8, 0.3) + np.sin(2*np.pi*x*freq*3) * gaussian(x, 1, 0.1)
+    init = np.sin(2*np.pi*x*freq) * gaussian(x, 2, 0.2) + np.sin(2*np.pi*x*freq*2) * gaussian(x, 8, 0.3) + np.sin(2*np.pi*x*freq*3) * gaussian(x, 1, 0.1)
 
-    hello_Rank(rank)
+    # hello_Rank(rank)
 
     # --- 1D Heat Equation ---
-    full_solution = MPI_Heat1D(init, t)
-    if rank == 0:
-        plotAnimation(x, full_solution)
-
-    # TODO: WARNING an error has been identified in the way MPI_Heat1D solves.
-    # There is a discrepancy between the single threaded and multi threaded
-    # solutions. The single threaded solution is correct. The multi threaded
-    # solution is not. The error is likely in the way the solution is gathered
-    # from the different ranks. The error is likely in the solution_accumulator
-    # function.
+    # full_solution = MPI_Heat1D(init, t)
+    # if rank == 0:
+    #     plotAnimation(x, full_solution)
     
+    # --- Single core ---
+    solution = spectral_solver_Heat1D(init, t)
+    
+    plot3D(x, t, solution)

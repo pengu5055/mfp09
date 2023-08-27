@@ -96,7 +96,7 @@ def euler_integrator(f, y0, t_points, *args):
         values: A list of solutions corresponding to the given time points.
     """
     # Step size parameter to be adjusted for accuracy
-    k = 0.01
+    k = 0.001
     print(f"Solving with step size {k}.")
 
     values = []
@@ -111,6 +111,7 @@ def euler_integrator(f, y0, t_points, *args):
             bar.update(prog)
     
     return np.array(values)
+
 
 
 def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
@@ -192,7 +193,12 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
     # Return the transpose so x is the first axis and t is the second
     return results.T
 
-
+# TODO: WARNING an error has been identified in the way MPI_Heat1D solves.
+# There is a discrepancy between the single threaded and multi threaded
+# solutions. The single threaded solution is correct. The multi threaded
+# solution is not. The error is likely in the way the solution is gathered
+# from the different ranks. The error is likely in the solution_accumulator
+# function.
 def MPI_Heat1D(init_cond, t_points, gaussian=False, debug=False):
     """
     Higher level function that contains all necessary function calls
@@ -270,16 +276,17 @@ def plot3D(x_vector, t_vector, evolution):
     surf = ax.plot_surface(x, t, evolution, cmap=cm.coolwarm,
                            linewidth=0, antialiased=False)
 
-    fig.colorbar(surf, shrink=0.5, aspect=5)
-
+    fig.colorbar(surf, pad=0.1)
+    fig.tight_layout()
     ax.set_title("Time evolution of the temperature distribution")
-    ax.set_xlabel(r'$x$')
-    ax.set_ylabel(r'$t$')
-    ax.set_zlabel(r'$T$')
+    ax.set_xlabel(r'$x\>[\mathrm{arbitrary\>units}]$')
+    ax.set_ylabel(r'$t\>[\mathrm{arbitrary\>units}]$')
+    ax.set_zlabel(r'$T\>[\mathrm{arbitrary\>units}]$')
     ax.grid(color="#c1d0d4", alpha=0.3)
+    fig.subplots_adjust(top=0.9)
     plt.show()
 
-def plotAnimation(x, solution, saveVideo=False, fps=20):
+def plotAnimation(x, solution, saveVideo=False, videoName="video.mp4", fps=20):
     """Plot the time evolution of the temperature distribution.
 
     Arguments:
@@ -309,6 +316,6 @@ def plotAnimation(x, solution, saveVideo=False, fps=20):
     ax.set_title("Time evolution of the temperature distribution")
     ax.legend()
     if saveVideo:
-        ani.save("sweep.mp4", writer=writervideo, fps=fps)
+        ani.save(videoName, writer=writervideo, fps=fps)
     
     plt.show()
