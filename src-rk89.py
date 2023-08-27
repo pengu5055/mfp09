@@ -4,6 +4,7 @@ the 8th order Runge-Kutta formula RK8(9). It is based on the paper
 https://ntrs.nasa.gov/citations/19680027281 p. 76-87.
 """
 import numpy as np
+from progressbar import ProgressBar
 
 
 def RK8(f, x0, y0, x, h):
@@ -121,33 +122,56 @@ def RK8(f, x0, y0, x, h):
     beta[16 - 1, 12] = 0.11481836466273301905225795954930 * 10**1
     beta[16 - 1, 13] = 0.41082191313833055603981327527525 * 10**-1
     beta[16 - 1, 15] = 1
+    # C has 0-based indexing
+    c[0] = 0.32256083500216249913612900960247 * 10**-1
+    c[8] = 0.25983725283715403018887023171963
+    c[9] = 0.92847805996577027788063714302190 * 10**-1
+    c[10] = 0.16452339514764342891647731842800
+    c[11] = 0.17665951637860074367084298397547
+    c[12] = 0.23920102320352759374108933320941	
+    c[13] = 0.39484274604202853746752118829325 * 10**-2
+    c[14] = 0.30726495475860640406368305522124 * 10**-1
 
-
-
-
+    # Reduce ninth-order equations to eighth-order with these
+    # assumptions.
     alpha[14 - 1] = alpha[15 - 1] = 1
     alpha[15 - 1] = 0
     for ind in range(1, 7 + 1):
         c_hat[ind - 1] = c[ind - 1] = 0
 
     c_hat[14 - 1] = 0
+    c_hat[15 - 1] = c_hat[16 - 1] = c[14 - 1]
+    for ind in range(1, 14 + 1):
+        c_hat[ind - 1] = c[ind - 1]
 
+    solution = np.zeros_like(y0)
+    errors = np.zeros_like(y0)
 
+    with ProgressBar(max_value=n) as bar:
+        # The iterator i counts the number of steps taken
+        for i in range(1, n+1):
+            # Apply the 8th order Runge-Kutta formula
+            f_vec = [f(x0, y0)] # First element already given
 
-    # Must be called when numbers are set
-    # c_hat[15 - 1] = c_hat[16 - 1] = c[14 - 1]
-    # c_hat[8 - 1] = c[8 - 1]  ... c_hat[14 - 1] = c[14 - 1]
+            for k in range(1, 16 + 1):
+                f_vec.append(f(x0 + alpha[k]*h, y0 + h*np.sum([beta[k][lam] for lam in range(0, k - 1)])))
 
+            y = y0 + h*np.sum(c[k]*f_vec[k] for k in range(1, 14 + 1))
 
+            # Apply the 9th order Runge-Kutta formula to estimate the error
+            y_hat = y0 + h*np.sum(c_hat[k]*f_vec[k] for k in range(1, 16 + 1))
 
-    # The iterator i counts the number of steps taken
-    for i in range(1, n+1):
-        # Apply the 8th order Runge-Kutta formula
-        f0 = f(x0, y0)
-        f_vec = []
-        for k in range(1, 16 + 1):
-            f_vec.append(f(x0 + alpha[k]*h, y0 + h*np.sum([beta[k][lam] for lam in range(0, k - 1)])))
-        
-        y = y0 + h*np.sum(c[k]*f_vec[k] for k in range(1, 14 + 1))
+            solution = np.column_stack((solution, y))
+            errors = np.column_stack((errors, y_hat - y))
 
-        y_hat = y0 + h*np.sum(c_hat[k]*f_vec[k] for k in range(1, 16 + 1))
+            # Prepare for the next iteration
+            y0 = y
+            x0 = x0 + h
+            bar.update(i)
+
+    # Remove first columns since they were generated empty
+    solution = np.delete(solution, 0, 1)
+    errors = np.delete(errors, 0, 1)
+
+    
+    return solution, errors
