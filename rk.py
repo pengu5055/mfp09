@@ -5,14 +5,43 @@ https://ntrs.nasa.gov/citations/19680027281 p. 76-87.
 """
 import numpy as np
 from progressbar import ProgressBar
+from rich import print
 
 
-def RK8(f, x0, y0, x, h):
+def RK8_9(f, x0, y0, x, h, outputSteps=False, debug=False, exitOnFail=False):
     """
+    This function implements the 8th order Runge-Kutta formula RK8(9)
+    for solving the initial value problem y' = f(x, y), y(x0) = y0.
+    The function is based on the paper
+    https://ntrs.nasa.gov/citations/19680027281 p. 76-87.
+
+    It is an amateur-ish implementation by pengu5055.
+
+    Arguments:
+        f: The function f(x, y) in the initial value problem.
+        x0: The initial value of x.
+        y0: The initial value of y.
+        x: The final value of x.
+        h: The step size.
+
+    Parameters:
+        outputSteps: If True, the function will output the array of
+        x coordinates which were used to compute the solution.
+    
+    Returns:
+        solution: An array where the columns are the solutions at 
+        the time points in x.
+        errors: An array where the columns are the estimated errors
+        at the time points in x.
     """
+    # Internal triggers
+    divergenceTolerance = 10e12
+
     n = int((x - x0) / h)
     x = x0
     y = y0
+
+    print(f"Running RK8(9) with {n} steps and a step size of {h}...")
 
     # The Butcher tableau for the 8th order Runge-Kutta formula
     alpha = np.zeros(16)
@@ -67,17 +96,17 @@ def RK8(f, x0, y0, x, h):
     beta[9 - 1, 6] = 0.19596557266170831957464490662983
     beta[9 - 1, 7] = -0.42742640364817603675144835342899 * 10**-2
     beta[9 - 1, 8] = 0.17434365736814911955323452558189 * 10**-1
-    beta[10 - 1, 0] = 0.54049783296931917355785724111182 * 10**-1
+    beta[10 - 1, 0] = 0.54059783296931917355785724111182 * 10**-1
     beta[10 - 1, 6] = 0.11029325597828926539283127648228
     beta[10 - 1, 7] = -0.12565008520072556414147763782250 * 10**-2
     beta[10 - 1, 8] = 0.36790043477581460136384043566339 * 10**-2
     beta[10 - 1, 9] = -0.57780542770372073940840628571866 * 10**-1
     beta[11 - 1, 0] = 0.12732477068657114546645181799160
-    beta[11 - 1, 7] = 0.11418303006395103323658875721817
+    beta[11 - 1, 7] = 0.11448805006396105323658875721817
     beta[11 - 1, 8] = 0.28773020703697992776202201849198
     beta[11 - 1, 9] = 0.50945379459611363153735885079465
     beta[11 - 1, 10] = -0.14799682244372575900242144449610
-    beta[12 - 1, 0] = -0.36326793876616740535848544394333 * 10**-2
+    beta[12 - 1, 0] = -0.36526793876616740535848544394333 * 10**-2
     beta[12 - 1, 5] = 0.81629896012318919777819421247030 * 10**-1
     beta[12 - 1, 6] = -0.38607735635693506490517694313215
     beta[12 - 1, 7] = 0.30862242924605106450474166025206 * 10**-1
@@ -102,7 +131,7 @@ def RK8(f, x0, y0, x, h):
     beta[14 - 1, 9] = -0.10383022991382490865769858507427 * 10**1
     beta[14 - 1, 10] = 0.16672327324258671664727346168501 * 10**1
     beta[14 - 1, 11] = 0.49551925855315977067732967071411
-    beta[14 - 1, 12] = 0.11394001132397063228586738141784 * 10**1
+    beta[14 - 1, 12] = 0.113940011323397063228586738141784 * 10**1
     beta[14 - 1, 13] = 0.51336696424658613688199097191534 * 10**-1
     beta[15 - 1, 0] = 0.10464847340614810391873002406755 * 10**-2
     beta[15 - 1, 8] = -0.67163886844990282237778446178020 * 10**-2
@@ -110,13 +139,13 @@ def RK8(f, x0, y0, x, h):
     beta[15 - 1, 10] = -0.42640342864483347277142138087561 * 10**-2
     beta[15 - 1, 11] = 0.28009029474168936545976331103703 * 10**-3
     beta[15 - 1, 12] = -0.87835333876238676639057813145633 * 10**-2
-    beta[15 - 1, 13] = 0.19976174238824432682773771616875 * 10**-1
-    beta[16 - 1, 0] = -0,13536550786174067080442168889966 * 10**1
+    beta[15 - 1, 13] = 0.10254505110825558084217769664009 * 10**-1
+    beta[16 - 1, 0] = -0.13536550786174067080442168889966 * 10**1
     beta[16 - 1, 5] = -0.18396103144848270375044198988231
     beta[16 - 1, 6] = -0.65570189449741645138006879985251
     beta[16 - 1, 7] = -0.39086144880439863435025520241310
     beta[16 - 1, 8] = 0.27466285581299925758962207732989
-    beta[16 - 1, 9] = -0.10164851753571915887035188572676 * 10**1
+    beta[16 - 1, 9] = -0.10464851753571915887035188572676 * 10**1
     beta[16 - 1, 10] = 0.16714967667123155012004488306588 * 10**1
     beta[16 - 1, 11] = 0.49523916825841808131186990740287
     beta[16 - 1, 12] = 0.11481836466273301905225795954930 * 10**1
@@ -134,35 +163,84 @@ def RK8(f, x0, y0, x, h):
 
     # Reduce ninth-order equations to eighth-order with these
     # assumptions.
-    alpha[14 - 1] = alpha[15 - 1] = 1
-    alpha[15 - 1] = 0
+    # Assume c is 0 indexed
     for ind in range(1, 7 + 1):
-        c_hat[ind - 1] = c[ind - 1] = 0
+        c_hat[ind - 1] = c[ind] = 0
 
+    
     c_hat[14 - 1] = 0
-    c_hat[15 - 1] = c_hat[16 - 1] = c[14 - 1]
-    for ind in range(1, 14 + 1):
-        c_hat[ind - 1] = c[ind - 1]
+    c_hat[15 - 1] = c_hat[16 - 1] = c[14]
+    for ind in range(8, 14 + 1):
+        c_hat[ind - 1] = c[ind]
 
     solution = np.zeros_like(y0)
     errors = np.zeros_like(y0)
+    x_steps = np.zeros_like(x)
 
-    with ProgressBar(max_value=n) as bar:
+    print("Integration in progress...")
+    with ProgressBar(max_value=n, redirect_stdout=True) as bar:
         # The iterator i counts the number of steps taken
         for i in range(1, n+1):
             # Apply the 8th order Runge-Kutta formula
             f_vec = [f(x0, y0)] # First element already given
 
             for k in range(1, 16 + 1):
-                f_vec.append(f(x0 + alpha[k]*h, y0 + h*np.sum([beta[k][lam] for lam in range(0, k - 1)])))
+                value = f(x0 + alpha[k - 1]*h, y0 + h*np.sum([beta[k - 1][lam] * f_vec[lam] for lam in range(0, k - 1)]))
 
-            y = y0 + h*np.sum(c[k]*f_vec[k] for k in range(1, 14 + 1))
+                # TODO: Remove debug as it could slow down the program
+                if debug:
+                    # Check if all elements of value are the same
+                    if np.abs(value[0]) > divergenceTolerance:
+                        print(f":warning: [bold red]Iteration step {i} on summation step {k} has diverged![/bold red]")
+                        if exitOnFail:
+                            raise ValueError("Divergence detected!")
+
+                    if np.all(value == value[0]):
+                        print(f"Iteration step {i} on summation step {k} has value: {value[0]}")
+                    else:
+                        try:
+                            if len(x0) > 0:
+                                # Having a vector as initial value is allowed to 
+                                # have different values
+                                pass
+                        except TypeError:
+                            # Catching a type error means that x0 is a scalar and thus has no len()
+                            print(f":warning: [bold red]Iteration step {i} on summation step {k} has different values![/bold red]")
+                            if exitOnFail:
+                                raise ValueError("1D initial conditions should not generate different values during steps!")
+
+                # END DEBUG
+
+                f_vec.append(value)
+
+            # Apply the 8th order Runge-Kutta formula to estimate the solution
+            y = y0 + h*np.sum([c[k - 1] * f_vec[k - 1] for k in range(1, 14 + 1)])
+            
+            # TODO: Remove debug as it could slow down the program
+            if debug:
+                # Check if all elements of y are the same
+                if np.all(y== y[0]):
+                    print(f"On step {i} the value of y is {y[0]}")
+                else:
+                    try:
+                        if len(x0) > 0:
+                            # Having a vector as initial value is allowed to 
+                            # have different values
+                            pass
+                    except TypeError:
+                        # Catching a type error means that x0 is a scalar and thus has no len()
+                        print(f":warning: [bold red]Iteration step {i} on summation step {k} has different values![/bold red]")
+                        if exitOnFail:
+                            raise ValueError("1D initial conditions should not generate different values during steps!")
+            
+            # END DEBUG
 
             # Apply the 9th order Runge-Kutta formula to estimate the error
-            y_hat = y0 + h*np.sum(c_hat[k]*f_vec[k] for k in range(1, 16 + 1))
+            y_hat = y0 + h*np.sum([c_hat[k - 1] * f_vec[k - 1] for k in range(1, 16 + 1)])
 
             solution = np.column_stack((solution, y))
             errors = np.column_stack((errors, y_hat - y))
+            x_steps = np.column_stack((x_steps, x0))
 
             # Prepare for the next iteration
             y0 = y
@@ -172,6 +250,9 @@ def RK8(f, x0, y0, x, h):
     # Remove first columns since they were generated empty
     solution = np.delete(solution, 0, 1)
     errors = np.delete(errors, 0, 1)
+    x_steps = np.delete(x_steps, 0, 1)
 
-    
-    return solution, errors
+    if outputSteps:
+        return solution, errors, x_steps
+    else:
+        return solution, errors
