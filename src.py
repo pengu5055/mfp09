@@ -9,6 +9,7 @@ from matplotlib import cm
 from progressbar import ProgressBar
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 from mpi4py import MPI
+import socket
 
 
 # --- Simulation Parameters ---
@@ -32,32 +33,56 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 
 
-
-
-def V_euler_integrator(f, init_cond, t_points, *args):
-    """Perform Euler integration for a given ODE but is vectorized.
+# --- Functions ---
+def hello_Rank(rank):
+    """Says hi from the current rank and machine.
 
     Parameters:
-        f: The derivative function of the ODE.
-        init_cond: The initial state of the system.
-        time_points: A list of time points at which to compute
-        the solution.
+        rank: The rank of the current process.
+    """
+    print(f"Hi! This is rank {rank} on {socket.gethostname()}. Ready to go to work...")
+
+
+def splitter_distributer(points):
+    """Divide and distribute given data into chunks per rank.
+
+    Parameters:
+        points: A list of data points which is to be
+        divided and distributed.
 
     Returns:
-        values: A list of solutions corresponding to the given time points.
+        divided[rank]: A list of data points which is
+        assigned to the current rank.
     """
-    n = len(t_points)
-    k = np.average(t_points[1]-t_points[0])
+    n = len(points)
+    divided = []
+    for i in range(size):
+        divided.append(points[i * n // size:(i + 1) * n // size])
 
-    values = np.zeros_like(init_cond)
-    y0 = init_cond
+    return divided[rank]
 
-    for t in tqdm(range(n - 1), total = n, desc ="Integration progress: "):
-        yn = y0 + k * f(y0, t_points[t], *args)
-        values = np.column_stack((values, yn))
-        y0 = yn
-    
-    return values
+
+def solution_accumulator(solution, isRoot=False):
+    """
+    Essentially a macro for MPI gather.
+
+    Parameters:
+        solution: The partial solution to be accumulated.
+
+    Returns:
+        accumulated_data: The accumulated data from all ranks.
+    """
+    accumulated_data = comm.gather(solution, root=0)
+
+    if not isRoot:
+        return accumulated_data  # comm.gather returns None on non-root ranks
+    elif isRoot:
+        # Cast to real numbers
+        accumulated_data = np.real(accumulated_data)
+        # Flatten the list of solutions of each rank
+        accumulated_data = np.asarray([contents for contents in accumulated_data])
+
+        return accumulated_data
 
 
 def euler_integrator(f, y0, t_points, *args):
@@ -90,7 +115,6 @@ def euler_integrator(f, y0, t_points, *args):
     return np.array(values)
 
 
-
 def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
     """
     Solve the 1D heat equation using spectral methods.
@@ -104,10 +128,18 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
         gaussian: Whether or not to use a gaussian correction for the FFT.
         debug: Whether or not to plot debug plots.
 
+    Raises:
+        ValueError: If the rank is not 0 and debug is True.
+
     Returns:
         results: A list of solutions corresponding to the given time points.
     """
+    if rank > 0 and debug:
+        raise ValueError(f"Debugging is not supported on rank {rank}. Only rank 0 can plot.")
+
     freq = np.fft.fftfreq(N, T)
+    if size > 1:
+        freq = splitter_distributer(freq)
     
     # Get Fourier coefficients
     if gaussian:
@@ -117,7 +149,9 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
 
     # Get wavenumbers
     k = 2 * np.pi * np.fft.fftfreq(N, T)
-
+    if size > 1:
+        k = splitter_distributer(k)
+    
     if debug:
         # DEBUG plot the initial condition
         plt.plot(init_cond)
@@ -146,7 +180,6 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
             evolved = (np.fft.ifft(evolved))
             results = np.column_stack((results, evolved))
             bar.update(prog)
-
 
     # Remove the first column of zeros
     results = np.delete(results, 0, 1)      
@@ -216,4 +249,3 @@ def plotAnimation(x, evolve):
     # ani.save("sweep.mp4", writer=writervideo)
     
     plt.show()
-

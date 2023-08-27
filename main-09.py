@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # Even simpler initial conditions. Just a sine wave. 
     freq = 10
-    init = np.sin(2*np.pi*x*freq)
+    # init = np.sin(2*np.pi*x*freq)
     # More difficult initial conditions. A superposition of sine waves.
     # init = np.sin(2*np.pi*x*freq) + np.sin(2*np.pi*x*freq*2) + np.sin(2*np.pi*x*freq*3)
     # Harder initial condition, perhaps a box function
@@ -32,10 +32,38 @@ if __name__ == "__main__":
     # init = gaussian(x, 5, 0.1)
     # Very hard initial conditions (not really), 
     # a superposition of gaussians modulated by a sine wave
-    # init = np.sin(2*np.pi*x*freq) * gaussian(x, 2, 0.2) + np.sin(2*np.pi*x*freq*2) * gaussian(x, 8, 0.3) + np.sin(2*np.pi*x*freq*3) * gaussian(x, 1, 0.1)
+    init = np.sin(2*np.pi*x*freq) * gaussian(x, 2, 0.2) + np.sin(2*np.pi*x*freq*2) * gaussian(x, 8, 0.3) + np.sin(2*np.pi*x*freq*3) * gaussian(x, 1, 0.1)
 
-    evolve = spectral_solver_Heat1D(init, t, debug=True)
+    hello_Rank(rank)
 
-    # plot3D(x, t, evolve)
+    # Split the temporal domain into equal chunks per rank
+    t = np.linspace(0, 10, N)
+    t_assigned = splitter_distributer(t)
+
+    # Split the initial condition into equal chunks per rank
+    init_assigned = splitter_distributer(init)
+
+
+    print(f"Rank {rank} has {len(t_assigned)} time points.")
+    print(f"Rank {rank}: Received temporal range {t_assigned[0]} to {t_assigned[-1]}.")
+
+    # Solve the problem
+    if rank != 0:
+        solution = spectral_solver_Heat1D(init_assigned, t_assigned)
+    elif rank == 0:
+        solution = spectral_solver_Heat1D(init_assigned, t_assigned, debug=True)
+
+    print(f"Solution shape {solution.shape}")
+
+    # Gather the solutions from each rank
+    if rank != 0:
+        full_solution = solution_accumulator(solution)
+    elif rank == 0:
+        full_solution = solution_accumulator(solution, isRoot=True)
+        print(full_solution.shape)
+
+    if rank == 0:
+        plot3D(x, t, full_solution)
+        plt.show()
 
     
