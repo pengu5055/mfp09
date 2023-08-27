@@ -33,4 +33,10 @@ if __name__ == "__main__":
     if rank == 0:
         plotAnimation(x, full_solution)
 
+    # TODO: WARNING an error has been identified in the way MPI_Heat1D solves.
+    # There is a discrepancy between the single threaded and multi threaded
+    # solutions. The single threaded solution is correct. The multi threaded
+    # solution is not. The error is likely in the way the solution is gathered
+    # from the different ranks. The error is likely in the solution_accumulator
+    # function.
     
