@@ -8,12 +8,19 @@ from progressbar import ProgressBar
 from rich import print
 
 
-def RK8_9(f, x0, y0, x, h, outputSteps=False, debug=False, exitOnFail=False):
+def RK8_9(f, x0, y0, x, h, 
+          outputSteps=False, 
+          debug=False, 
+          exitOnFail=False, 
+          disableDivCheck=False):
     """
     This function implements the 8th order Runge-Kutta formula RK8(9)
     for solving the initial value problem y' = f(x, y), y(x0) = y0.
-    The function is based on the paper
+    The function is based on the paper:
     https://ntrs.nasa.gov/citations/19680027281 p. 76-87.
+
+    WARNING: This function is currently not working properly. It 
+    diverges for even the simplest of initial value problems!
 
     It is an amateur-ish implementation by pengu5055.
 
@@ -26,13 +33,20 @@ def RK8_9(f, x0, y0, x, h, outputSteps=False, debug=False, exitOnFail=False):
 
     Parameters:
         outputSteps: If True, the function will output the array of
-        x coordinates which were used to compute the solution.
+            x coordinates which were used to compute the solution.
+        debug: If True, the function will print debug information.
+        exitOnFail: If True, the function will raise an error if
+            the solution diverges or if the 1D initial conditions 
+            generate different values during the steps.
+        disableDivCheck: If True, the function will not check if
+            the solution diverges.
     
     Returns:
         solution: An array where the columns are the solutions at 
-        the time points in x.
+        generated time points in x.
         errors: An array where the columns are the estimated errors
-        at the time points in x.
+        at generated time points in x.
+        x_steps: An array where the columns are the step points in x.
     """
     # Internal triggers
     divergenceTolerance = 10e12
@@ -41,7 +55,7 @@ def RK8_9(f, x0, y0, x, h, outputSteps=False, debug=False, exitOnFail=False):
     x = x0
     y = y0
 
-    print(f"Running RK8(9) with {n} steps and a step size of {h}...")
+    print(f"Running RK8_9() with {n} steps and a step size of {h}...")
 
     # The Butcher tableau for the 8th order Runge-Kutta formula
     alpha = np.zeros(16)
@@ -190,10 +204,12 @@ def RK8_9(f, x0, y0, x, h, outputSteps=False, debug=False, exitOnFail=False):
                 # TODO: Remove debug as it could slow down the program
                 if debug:
                     # Check if all elements of value are the same
-                    if np.abs(value[0]) > divergenceTolerance:
-                        print(f":warning: [bold red]Iteration step {i} on summation step {k} has diverged![/bold red]")
-                        if exitOnFail:
-                            raise ValueError("Divergence detected!")
+                    if not disableDivCheck:
+                        if np.abs(value[0]) > divergenceTolerance:
+                            print(f":warning: [bold red]Iteration step {i} on summation step {k} has diverged![/bold red]")
+                            if exitOnFail:
+                                print(f"Last known value: {value[0]}")
+                                raise ValueError("Divergence detected!")
 
                     if np.all(value == value[0]):
                         print(f"Iteration step {i} on summation step {k} has value: {value[0]}")

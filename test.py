@@ -16,12 +16,20 @@ x = np.linspace(0, 10, N)
 # plotAnimation(x, solution, saveVideo=True)
 
 # Test RK8(9) integrator
+
+def ivp_2(t, y):
+    """Test IVP to try out integrators.
+    Has the analytical solution 2 * np.exp(-2*t) + np.exp(t)
+    for y(0) = 5
+    """
+    return -2*y + 3 * np.exp(t)
+
 eps = 1e-8
 init = np.full(N, 5)
-sol, err, steps = RK8_9(ivp_1, 0, init, 10, 0.001, outputSteps=True, debug=True, exitOnFail=True)
+sol, err, steps = RK8_9(ivp_2, 0, init, 10, 0.01, outputSteps=True, debug=True,
+                         exitOnFail=True, disableDivCheck=False)
 analytical = 2 * np.exp(-2*t) + np.exp(t)
 
-print(np.abs(t[0] - steps[0, 0]) < eps) 
 
 plt.plot(steps[0], sol[0], label="RK8(9)")
 plt.plot(t, analytical, label="Analytical")
