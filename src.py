@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from progressbar import ProgressBar
 from matplotlib.animation import FuncAnimation, FFMpegWriter
-
+from mpi4py import MPI
 
 
 # --- Simulation Parameters ---
@@ -19,12 +19,20 @@ C = 200
 N = 1000  # Samples
 T = 1/100  # Sample frequency
 a = N*T
+
 # ---  Physical Parameters  ---
 D_Al = 9.7e-5  # Thermal diffusivity of Aluminum
 D_Cu = 1.1e-4  # Thermal diffusivity of Copper
 # D = LAMBDA/(RHO * C)
 D = D_Al
-# -----------------------------
+
+# ---  MPI Parameters  ---
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+
+
 
 def V_euler_integrator(f, init_cond, t_points, *args):
     """Perform Euler integration for a given ODE but is vectorized.
@@ -71,21 +79,34 @@ def euler_integrator(f, y0, t_points, *args):
     values = []
     y = y0
 
-    with ProgressBar(marker='I', max_value=len(t_points)) as bar:
+    print("Integration progress:")
+    with ProgressBar(max_value=len(t_points)) as bar:
         for prog, t in enumerate(t_points):
             yn = y + k * f(y, t, *args)
             values.append(yn)
             y = yn
             bar.update(prog)
-
-    # Delete first column in y
-    # values = np.delete(values, 0, 1)
     
     return np.array(values)
 
 
 
-def spectral_solver_Heat1D(init_cond, t_points, gaussian=False):
+def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
+    """
+    Solve the 1D heat equation using spectral methods.
+
+    Args:
+        init_cond: The initial condition of the system.
+        t_points: A list of time points at which to compute
+        the solution.
+
+    Parameters:
+        gaussian: Whether or not to use a gaussian correction for the FFT.
+        debug: Whether or not to plot debug plots.
+
+    Returns:
+        results: A list of solutions corresponding to the given time points.
+    """
     freq = np.fft.fftfreq(N, T)
     
     # Get Fourier coefficients
@@ -97,30 +118,46 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False):
     # Get wavenumbers
     k = 2 * np.pi * np.fft.fftfreq(N, T)
 
+    if debug:
+        # DEBUG plot the initial condition
+        plt.plot(init_cond)
+        plt.title("Initial condition")
+        plt.show()
+
+        # DEBUG plot the fourier coefficients of the initial condition
+        plt.plot(freq, np.abs(T_hat_k))
+        plt.title("Fourier coefficients before the evolution")
+        plt.show()
+
     evolution = euler_integrator(T_evolve, T_hat_k, t_points, k)
 
-    # DEBUG plot the fourier coefficients of the evolution
-    plt.plot(freq, np.abs(evolution[:, 0]))
-    plt.show()
-
-    # Make evolution the same shape as output of V_euler_integrator (1000, 1000)
-    # evolution = np.tile(T_hat_k, (N, 1))
+    if debug:
+        # DEBUG plot the fourier coefficients of the evolution
+        plt.plot(freq, np.abs(evolution[:, 0]))
+        plt.title("Fourier coefficients of the evolution")
+        plt.show()
     
     results = np.zeros_like(init_cond)
 
     # For sanity's sake lets do the inverse transform column by column
-    for evolved in evolution:
-        evolved = (np.fft.ifft(evolved)) # 1/N *
-        results = np.column_stack((results, evolved))
+    print("Inverse Fourier transform progress:")
+    with ProgressBar(max_value=len(t_points)) as bar:
+        for prog, evolved in enumerate(evolution):
+            evolved = (np.fft.ifft(evolved))
+            results = np.column_stack((results, evolved))
+            bar.update(prog)
+
 
     # Remove the first column of zeros
-    results = np.delete(results, 0, 1)       
+    results = np.delete(results, 0, 1)      
 
-    # DEBUG plot the evolution and the initial condition
-    plt.plot(init_cond, label="Initial condition")
-    plt.plot(results[:, 0], label="Evolved")
-    plt.legend()
-    plt.show()
+    if debug:
+        # DEBUG plot the evolution and the initial condition
+        plt.plot(init_cond, label="Initial condition")
+        plt.plot(results[:, 0], label="Evolved")
+        plt.title("Replication of the initial condition")
+        plt.legend()
+        plt.show()
 
     # Return the transpose so x is the first axis and t is the second
     return results.T

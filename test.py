@@ -16,7 +16,7 @@ def ivp_1(y, t):
     return -2*y + 3 * np.exp(t)
 
 t = np.linspace(0, 10, 1000)
-init = 5
+init = np.full(len(t), 5)
 test = euler_integrator(ivp_1, init, t)
 analytical = 2 * np.exp(-2*t) + np.exp(t)
 

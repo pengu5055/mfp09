@@ -21,7 +21,7 @@ if __name__ == "__main__":
     t = np.linspace(0, 1, N)
 
     # Even simpler initial conditions. Just a sine wave. 
-    freq = 0.1
+    freq = 10
     init = np.sin(2*np.pi*x*freq)
     # More difficult initial conditions. A superposition of sine waves.
     # init = np.sin(2*np.pi*x*freq) + np.sin(2*np.pi*x*freq*2) + np.sin(2*np.pi*x*freq*3)
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # a superposition of gaussians modulated by a sine wave
     # init = np.sin(2*np.pi*x*freq) * gaussian(x, 2, 0.2) + np.sin(2*np.pi*x*freq*2) * gaussian(x, 8, 0.3) + np.sin(2*np.pi*x*freq*3) * gaussian(x, 1, 0.1)
 
-    evolve = spectral_solver_Heat1D(init, t)
+    evolve = spectral_solver_Heat1D(init, t, debug=True)
 
     # plot3D(x, t, evolve)
 
