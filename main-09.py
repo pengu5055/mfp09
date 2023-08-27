@@ -38,20 +38,15 @@ if __name__ == "__main__":
 
     # Split the temporal domain into equal chunks per rank
     t = np.linspace(0, 10, N)
-    t_assigned = splitter_distributer(t)
 
     # Split the initial condition into equal chunks per rank
     init_assigned = splitter_distributer(init)
 
-
-    print(f"Rank {rank} has {len(t_assigned)} time points.")
-    print(f"Rank {rank}: Received temporal range {t_assigned[0]} to {t_assigned[-1]}.")
-
     # Solve the problem
     if rank != 0:
-        solution = spectral_solver_Heat1D(init_assigned, t_assigned)
+        solution = spectral_solver_Heat1D(init_assigned, t)
     elif rank == 0:
-        solution = spectral_solver_Heat1D(init_assigned, t_assigned, debug=True)
+        solution = spectral_solver_Heat1D(init_assigned, t, debug=False)
 
     print(f"Solution shape {solution.shape}")
 

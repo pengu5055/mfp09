@@ -77,10 +77,8 @@ def solution_accumulator(solution, isRoot=False):
     if not isRoot:
         return accumulated_data  # comm.gather returns None on non-root ranks
     elif isRoot:
-        # Cast to real numbers
-        accumulated_data = np.real(accumulated_data)
-        # Flatten the list of solutions of each rank
-        accumulated_data = np.asarray([contents for contents in accumulated_data])
+        # Transform the list of shape (5, 200, 200) into (1000, 1000)
+        accumulated_data = np.concatenate(accumulated_data, axis=1)
 
         return accumulated_data
 
@@ -125,7 +123,8 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
         the solution.
 
     Parameters:
-        gaussian: Whether or not to use a gaussian correction for the FFT.
+        gaussian: Whether or not to use a gaussian correction for the FFT
+        (semi-deprecated).
         debug: Whether or not to plot debug plots.
 
     Raises:
@@ -136,10 +135,9 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
     """
     if rank > 0 and debug:
         raise ValueError(f"Debugging is not supported on rank {rank}. Only rank 0 can plot.")
-
-    freq = np.fft.fftfreq(N, T)
-    if size > 1:
-        freq = splitter_distributer(freq)
+    # Number of samples since variable per rank
+    n = len(init_cond)
+    freq = np.fft.fftfreq(n, T)
     
     # Get Fourier coefficients
     if gaussian:
@@ -148,9 +146,7 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
         T_hat_k = np.fft.fft(init_cond) 
 
     # Get wavenumbers
-    k = 2 * np.pi * np.fft.fftfreq(N, T)
-    if size > 1:
-        k = splitter_distributer(k)
+    k = 2 * np.pi * np.fft.fftfreq(n, T)
     
     if debug:
         # DEBUG plot the initial condition
@@ -164,10 +160,11 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
         plt.show()
 
     evolution = euler_integrator(T_evolve, T_hat_k, t_points, k)
+    print(evolution.shape)
 
     if debug:
         # DEBUG plot the fourier coefficients of the evolution
-        plt.plot(freq, np.abs(evolution[:, 0]))
+        plt.plot(freq, np.abs(evolution[0]))
         plt.title("Fourier coefficients of the evolution")
         plt.show()
     
