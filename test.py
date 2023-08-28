@@ -16,7 +16,8 @@ x = np.linspace(0, 10, N)
 # plotAnimation(x, solution, saveVideo=True)
 
 # Test RK4_5() integrator
-t = np.linspace(0, 10, 1000)
+N = int(10e6)
+t = np.linspace(0, 10, N)
 def ivp_2(t, y):
     """Test IVP to try out integrators.
     Has the analytical solution 2 * np.exp(-2*t) + np.exp(t)
@@ -34,7 +35,7 @@ override = {
             "stepUpSafetyFactor": 1.05
         }
 
-sol, err, steps = RK4_5(ivp_2, 0, init, 10, 1000, outputSteps=True, debug=False,
+sol, err, steps = RK4_5(ivp_2, 0, init, 10, N, outputSteps=True, debug=False,
                          exitOnWarning=True, disableDivCheck=False)
 analytical = 2 * np.exp(-2*t) + np.exp(t)
 
@@ -47,7 +48,7 @@ print(steps)
 
 
 plt.plot(t, analytical, label="Analytical")
-plt.plot(steps, sol[0], label="RK8(9)")
+plt.plot(steps[0], sol[0], label="RK4(5)")
 plt.legend()
 plt.show()
 
