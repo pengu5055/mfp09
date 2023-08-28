@@ -25,13 +25,29 @@ def ivp_2(t, y):
     return -2*y + 3 * np.exp(t)
 
 eps = 1e-8
-init = np.full(N, 5)
-sol, err, steps = RK8_9(ivp_2, 0, init, 10, 0.0005, outputSteps=True, debug=False,
+init = 5
+
+override = {
+            "divergenceTolerance": 10e12,
+            "eps": 10e-6,
+            "stepDownSafetyFactor": 0.8,
+            "stepUpSafetyFactor": 1.05
+        }
+
+sol, err, steps = RK8_9(ivp_2, 0, init, 10, 0.05, outputSteps=True, debug=False,
                          exitOnFail=True, disableDivCheck=False)
 analytical = 2 * np.exp(-2*t) + np.exp(t)
 
+print(steps)
+
+# TODO Potential issue identified in steps. After a few iterations, the step
+# size becomes infinite and the solver fails but does not know it has failed.
+# Add check for this. Investigate nan values in steps. 
+# See if correct safety factors and eps are used.
+
+
 plt.plot(t, analytical, label="Analytical")
-plt.plot(t, sol[0], label="RK8(9)")
+plt.plot(steps, sol[0], label="RK8(9)")
 plt.legend()
 plt.show()
 

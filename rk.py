@@ -8,6 +8,9 @@ from rich import print
 from rich.progress import Progress
 from typing import Callable, Tuple, Iterable
 
+# TODO Change main loop to a while loop since we
+# now use an adaptive step size and the amount of
+# steps is not known beforehand.
 
 def RK8_9(f: Callable,
           x0: Iterable[float] | float,
@@ -316,7 +319,8 @@ def RK8_9(f: Callable,
 
             # Prepare for the next iteration
             y0 = y
-            x0 = (x0 + h)[0] # TODO TEMPORARY FIX: append only scalar values of x0
+            # x0 = (x0 + h)[0] # TODO TEMPORARY FIX: append only scalar values of x0
+            x0 = x0 + h
 
             # Sanity check if all x0 elements are the same
             if exitOnFail:
