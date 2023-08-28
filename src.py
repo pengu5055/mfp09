@@ -165,7 +165,7 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False, num
     if numericalSolve:
         evolution = euler_integrator(T_evolve, T_hat_k, t_points, k)
     else:
-        evolution = T_hat_k
+        evolution = T_hat_k * np.exp(-D * k**2 * t_points[:, np.newaxis])
 
     if debug:
         # DEBUG plot the fourier coefficients of the evolution

@@ -4,7 +4,7 @@ The following code is used to test the spectral solver for the 1D heat equation.
 import numpy as np
 import matplotlib.pyplot as plt
 from src import *
-from rk import *
+from integrator import *
 
 
 t = np.linspace(0, 10, N)
@@ -15,8 +15,8 @@ x = np.linspace(0, 10, N)
 # solution = spectral_solver_Heat1D(init, t)
 # plotAnimation(x, solution, saveVideo=True)
 
-# Test RK8(9) integrator
-t = np.linspace(0, 10, 20000)
+# Test RK4_5() integrator
+t = np.linspace(0, 10, 1000)
 def ivp_2(t, y):
     """Test IVP to try out integrators.
     Has the analytical solution 2 * np.exp(-2*t) + np.exp(t)
@@ -34,8 +34,8 @@ override = {
             "stepUpSafetyFactor": 1.05
         }
 
-sol, err, steps = RK8_9(ivp_2, 0, init, 10, 0.05, outputSteps=True, debug=False,
-                         exitOnFail=True, disableDivCheck=False)
+sol, err, steps = RK4_5(ivp_2, 0, init, 10, 1000, outputSteps=True, debug=False,
+                         exitOnWarning=True, disableDivCheck=False)
 analytical = 2 * np.exp(-2*t) + np.exp(t)
 
 print(steps)

@@ -34,6 +34,6 @@ if __name__ == "__main__":
     #     plotAnimation(x, full_solution)
     
     # --- Single core ---
-    solution = spectral_solver_Heat1D(init, t)
+    solution = spectral_solver_Heat1D(init, t, numericalSolve=False)
     
     plot3D(x, t, solution)
