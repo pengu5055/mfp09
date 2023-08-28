@@ -114,19 +114,21 @@ def euler_integrator(f, y0, t_points, *args):
 
 
 
-def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
+def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False, numericalSolve=True):
     """
     Solve the 1D heat equation using spectral methods.
 
     Args:
         init_cond: The initial condition of the system.
         t_points: A list of time points at which to compute
-        the solution.
+            the solution.
 
     Parameters:
         gaussian: Whether or not to use a gaussian correction for the FFT
-        (semi-deprecated).
+            (semi-deprecated).
         debug: Whether or not to plot debug plots.
+        numericalSolve: Whether or not to use the numerical solver. If False
+            the analytical solution is used for evolution of the system.
 
     Raises:
         ValueError: If the rank is not 0 and debug is True.
@@ -160,8 +162,10 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
         plt.title("Fourier coefficients before the evolution")
         plt.show()
 
-    evolution = euler_integrator(T_evolve, T_hat_k, t_points, k)
-    print(evolution.shape)
+    if numericalSolve:
+        evolution = euler_integrator(T_evolve, T_hat_k, t_points, k)
+    else:
+        evolution = T_hat_k
 
     if debug:
         # DEBUG plot the fourier coefficients of the evolution
@@ -199,7 +203,7 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False):
 # solution is not. The error is likely in the way the solution is gathered
 # from the different ranks. The error is likely in the solution_accumulator
 # function.
-def MPI_Heat1D(init_cond, t_points, gaussian=False, debug=False):
+def MPI_Heat1D(init_cond, t_points, gaussian=False, debug=False, numericalSolve=True):
     """
     Higher level function that contains all necessary function calls
     to solve the 1D heat equation using spectral method with MPI.
@@ -207,12 +211,14 @@ def MPI_Heat1D(init_cond, t_points, gaussian=False, debug=False):
     Args:
         init_cond: The initial condition of the system.
         t_points: A list of time points at which to compute
-        the solution.
+            the solution.
 
     Parameters:
         gaussian: Whether or not to use a gaussian correction for the FFT
-        (semi-deprecated).
+            (semi-deprecated).
         debug: Whether or not to plot debug plots. Only supported on rank 0.
+        numericalSolve: Whether or not to use the numerical solver. If False
+            the analytical solution is used for evolution of the system.
 
     Raises:
         ValueError: If the rank is not 0 and debug is True.
@@ -236,6 +242,22 @@ def MPI_Heat1D(init_cond, t_points, gaussian=False, debug=False):
         full_solution = solution_accumulator(solution, isRoot=True)
     
     return full_solution
+
+
+def T_analytical_evolve(T_hat_k, t, k):
+    """Evolve the temperature distribution in time.
+
+    This is done by evolving the Fourier coefficients in time
+    using the analytical solution.
+
+    Args:
+        T_hat_k: The Fourier Coefficients.
+        t: The time at which to evaluate the evolution.
+
+    Return:
+        Analytical solution of the evolution.
+    """
+    return np.exp(-D * k**2 * t) * T_hat_k
 
 
 def T_evolve(T_hat_k, t, k):

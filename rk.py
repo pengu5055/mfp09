@@ -4,15 +4,22 @@ the 8th order Runge-Kutta formula RK8(9). It is based on the paper
 https://ntrs.nasa.gov/citations/19680027281 p. 76-87.
 """
 import numpy as np
-from progressbar import ProgressBar
 from rich import print
+from rich.progress import Progress
+from typing import Callable, Tuple, Iterable
 
 
-def RK8_9(f, x0, y0, x, h, 
-          outputSteps=False, 
-          debug=False, 
-          exitOnFail=False, 
-          disableDivCheck=False):
+def RK8_9(f: Callable,
+          x0: Iterable[float] | float,
+          y0: Iterable[float] | float,
+          x: float,
+          h: float, 
+          outputSteps: bool = False, 
+          debug: bool = False, 
+          exitOnFail: bool = False, 
+          disableDivCheck: bool = False,
+          overrideInternalSettings: dict[str, float] = None
+          ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function implements the 8th order Runge-Kutta formula RK8(9)
     for solving the initial value problem y' = f(x, y), y(x0) = y0.
@@ -40,6 +47,16 @@ def RK8_9(f, x0, y0, x, h,
             generate different values during the steps.
         disableDivCheck: If True, the function will not check if
             the solution diverges.
+        overrideInternalSettings: If not None, the function will
+            override the internal settings with the given dictionary.
+            The dictionary should have the following keys:
+             - "divergenceTolerance": The tolerance for the divergence
+                check.
+             - "eps": The tolerance for the adaptive step size.  
+             - "stepDownSafetyFactor": The safety factor for reducing
+                the step size.
+             - "stepUpSafetyFactor": The safety factor for increasing
+                the step size.
     
     Returns:
         solution: An array where the columns are the solutions at 
@@ -48,8 +65,21 @@ def RK8_9(f, x0, y0, x, h,
         at generated time points in x.
         x_steps: An array where the columns are the step points in x.
     """
-    # Internal triggers
-    divergenceTolerance = 10e12
+    # Internal settings
+    if overrideInternalSettings:
+        INTERNAL = overrideInternalSettings
+    else:
+        INTERNAL = {
+            "divergenceTolerance": 10e12,
+            "eps": 10e-8,
+            "stepDownSafetyFactor": 0.9,
+            "stepUpSafetyFactor": 1.1
+        }
+    
+    # Cache variables that are going to be used in iterations
+    eps = INTERNAL["eps"]
+    stepDownSafetyFactor = INTERNAL["stepDownSafetyFactor"]
+    stepUpSafetyFactor = INTERNAL["stepUpSafetyFactor"]
 
     n = int((x - x0) / h)
     x = x0
@@ -192,27 +222,29 @@ def RK8_9(f, x0, y0, x, h,
     x_steps = np.zeros_like(x)
 
     print("Integration in progress...")
-    with ProgressBar(max_value=n, redirect_stdout=True) as bar:
+    with Progress() as progress:
+        task1 = progress.add_task("[red]Integration...", total=n)
         # The iterator i counts the number of steps taken
         for i in range(1, n+1):
             # Apply the 8th order Runge-Kutta formula
             f_vec = [f(x0, y0)] # First element already given
 
             for k in range(1, 16 + 1):
-                value = f(x0 + alpha[k - 1]*h, y0 + h*np.sum([beta[k - 1][lam] * f_vec[lam] for lam in range(0, k - 1)]))
+                value = f(x0 + alpha[k - 1]*h, y0 + 
+                          h*np.sum([beta[k - 1][lam] * f_vec[lam] for lam in range(0, k)]))
 
                 # TODO: Remove debug as it could slow down the program
                 if debug:
                     # Check if all elements of value are the same
                     if not disableDivCheck:
-                        if np.abs(value[0]) > divergenceTolerance:
-                            print(f":warning: [bold red]Iteration step {i} on summation step {k} has diverged![/bold red]")
+                        if np.abs(value[0]) > INTERNAL["divergenceTolerance"]:
+                            progress.console.print(f":warning: [bold red]Iteration step {i} on summation step {k} has diverged![/bold red]")
                             if exitOnFail:
-                                print(f"Last known value: {value[0]}")
+                                progress.console.print(f"Last known value: {value[0]}")
                                 raise ValueError("Divergence detected!")
 
                     if np.all(value == value[0]):
-                        print(f"Iteration step {i} on summation step {k} has value: {value[0]}")
+                        progress.console.print(f"Iteration step {i} on summation step {k} has value: {value[0]}")
                     else:
                         try:
                             if len(x0) > 0:
@@ -221,7 +253,7 @@ def RK8_9(f, x0, y0, x, h,
                                 pass
                         except TypeError:
                             # Catching a type error means that x0 is a scalar and thus has no len()
-                            print(f":warning: [bold red]Iteration step {i} on summation step {k} has different values![/bold red]")
+                            progress.console.print(f":warning: [bold red]Iteration step {i} on summation step {k} has different values![/bold red]")
                             if exitOnFail:
                                 raise ValueError("1D initial conditions should not generate different values during steps!")
 
@@ -229,14 +261,23 @@ def RK8_9(f, x0, y0, x, h,
 
                 f_vec.append(value)
 
+            if debug:
+                if len(f_vec) != 17:
+                    progress.console.print(f":warning: [bold red]Iteration step {i} has {f_vec.size[0]} elements![/bold red]")
+                    if exitOnFail:
+                        raise ValueError("f_vec should have 17 elements!")
+
             # Apply the 8th order Runge-Kutta formula to estimate the solution
-            y = y0 + h*np.sum([c[k - 1] * f_vec[k - 1] for k in range(1, 14 + 1)])
+            # Give benefit of the doubt to the paper and assume that the
+            # K can be indexed from 0.
+            # y = y0 + h*np.sum([c[k - 1] * f_vec[k - 1] for k in range(1, 14 + 1)])
+            y = y0 + h*np.sum([c[k] * f_vec[k] for k in range(0, 14)])
             
             # TODO: Remove debug as it could slow down the program
             if debug:
                 # Check if all elements of y are the same
                 if np.all(y== y[0]):
-                    print(f"On step {i} the value of y is {y[0]}")
+                    progress.console.print(f"On step {i} the value of y is {y[0]}")
                 else:
                     try:
                         if len(x0) > 0:
@@ -245,23 +286,41 @@ def RK8_9(f, x0, y0, x, h,
                             pass
                     except TypeError:
                         # Catching a type error means that x0 is a scalar and thus has no len()
-                        print(f":warning: [bold red]Iteration step {i} on summation step {k} has different values![/bold red]")
+                        progress.console.print(f":warning: [bold red]Iteration step {i} on summation step {k} has different values![/bold red]")
                         if exitOnFail:
                             raise ValueError("1D initial conditions should not generate different values during steps!")
             
             # END DEBUG
 
             # Apply the 9th order Runge-Kutta formula to estimate the error
-            y_hat = y0 + h*np.sum([c_hat[k - 1] * f_vec[k - 1] for k in range(1, 16 + 1)])
+            # Give benefit of the doubt to the paper and assume that the
+            # K can be indexed from 0.
+            # y_hat = y0 + h*np.sum([c_hat[k - 1] * f_vec[k - 1] for k in range(1, 16 + 1)])
+            y_hat = y0 + h*np.sum([c_hat[k] * f_vec[k] for k in range(0, 16)])
 
             solution = np.column_stack((solution, y))
             errors = np.column_stack((errors, y_hat - y))
             x_steps = np.column_stack((x_steps, x0))
 
+            # Adaptive step size
+            if np.any(np.abs(y_hat - y) > eps):
+                # Error is too large so reduce step size
+                h = h * stepDownSafetyFactor * (eps / np.abs(y_hat - y))**(1/8)
+            else:
+                # Error is small enough so increase step size
+                h = h * stepUpSafetyFactor * (eps / np.abs(y_hat - y))**(1/8)
+
             # Prepare for the next iteration
             y0 = y
-            x0 = x0 + h
-            bar.update(i)
+            x0 = (x0 + h)[0] # TODO TEMPORARY FIX: append only scalar values of x0
+
+            # Sanity check if all x0 elements are the same
+            if exitOnFail:
+                if x0.size > 1:
+                    if not np.all(x0 == x0[0]):
+                        raise ValueError("x0 should not have different values during steps!")
+            
+            progress.update(task1, advance=1)
 
     # Remove first columns since they were generated empty
     solution = np.delete(solution, 0, 1)

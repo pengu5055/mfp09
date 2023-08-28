@@ -26,13 +26,12 @@ def ivp_2(t, y):
 
 eps = 1e-8
 init = np.full(N, 5)
-sol, err, steps = RK8_9(ivp_2, 0, init, 10, 0.01, outputSteps=True, debug=True,
+sol, err, steps = RK8_9(ivp_2, 0, init, 10, 0.001, outputSteps=True, debug=False,
                          exitOnFail=True, disableDivCheck=False)
 analytical = 2 * np.exp(-2*t) + np.exp(t)
 
-
-plt.plot(steps[0], sol[0], label="RK8(9)")
 plt.plot(t, analytical, label="Analytical")
+plt.plot(t, sol[0], label="RK8(9)")
 plt.legend()
 plt.show()
 
