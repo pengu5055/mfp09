@@ -22,6 +22,7 @@ def RK8_9(f: Callable,
           ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function implements the 8th order Runge-Kutta formula RK8(9)
+    with 9th order error estimation. It is an adaptive step size method
     for solving the initial value problem y' = f(x, y), y(x0) = y0.
     The function is based on the paper:
     https://ntrs.nasa.gov/citations/19680027281 p. 76-87.
@@ -309,6 +310,9 @@ def RK8_9(f: Callable,
             else:
                 # Error is small enough so increase step size
                 h = h * stepUpSafetyFactor * (eps / np.abs(y_hat - y))**(1/8)
+
+            if debug:
+                print(f"Step size: {h}")
 
             # Prepare for the next iteration
             y0 = y

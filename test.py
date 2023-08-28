@@ -16,7 +16,7 @@ x = np.linspace(0, 10, N)
 # plotAnimation(x, solution, saveVideo=True)
 
 # Test RK8(9) integrator
-
+t = np.linspace(0, 10, 20000)
 def ivp_2(t, y):
     """Test IVP to try out integrators.
     Has the analytical solution 2 * np.exp(-2*t) + np.exp(t)
@@ -26,7 +26,7 @@ def ivp_2(t, y):
 
 eps = 1e-8
 init = np.full(N, 5)
-sol, err, steps = RK8_9(ivp_2, 0, init, 10, 0.001, outputSteps=True, debug=False,
+sol, err, steps = RK8_9(ivp_2, 0, init, 10, 0.0005, outputSteps=True, debug=False,
                          exitOnFail=True, disableDivCheck=False)
 analytical = 2 * np.exp(-2*t) + np.exp(t)
 
