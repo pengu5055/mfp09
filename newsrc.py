@@ -7,6 +7,7 @@ methods for solving the heat equation and plotting the solution.
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation, FFMpegWriter
 from scipy import fftpack
 from scipy.integrate import odeint, solve_ivp
 from typing import Callable, Tuple, Iterable
@@ -106,8 +107,6 @@ class SpectralSolver:
     def _gaussian_FFT_corr(self, freq: float):
         return np.exp(2 * np.pi *1j * freq * self.t_points * (self.N/2))
     
-    def _gaussian(self, x: float, a: float, sigma: float):
-        return np.exp(-((-x+a)/2)**2 / sigma**2)
     
     def _dirichlet_boundary(self, ya, yb):
         """
@@ -115,6 +114,7 @@ class SpectralSolver:
         """
         return np.zeros((2,))
 
+    @_internal_function_timer
     def solve_Analytically(self):
         """
         Solve the heat equation using the spectral solver and _analytical_step.
@@ -129,14 +129,15 @@ class SpectralSolver:
         
         return self.solution
 
+    @_internal_function_timer
     def solve_Numerically(self):
         """
         Solve the heat equation using the spectral solver _evolve_step.
         """
         self.solution = np.zeros((len(self.t_points), self.N))
         self.solution[0] = self.initial_condition(self.x)
+        # Absolutely need previous coefficients to be able to iterate and evolve.
         self.previous = np.copy(self.T_hat_k)
-
         for i, t in enumerate(self.t_points[1:]):
             self.previous = solve_ivp(self._evolve_step_vectorized, (self.t_points[0], self.t_points[-1]), self.previous,
                                         method="RK45", t_eval=[t], vectorized=True).y.flatten()
@@ -161,4 +162,58 @@ class SpectralSolver:
         plt.suptitle("Initial condition in Fourier space")
         plt.show()
     
+    def plot_Animation(self, x: Iterable[float] | None = None, 
+                       solution: Iterable[float] | None = None,
+                       saveVideo: bool = False, 
+                       videoName: str = "animation.mp4", 
+                       fps: int = 20):
+        """
+        Plot the solution as an animation. Will try to get computed solution
+        from solver itself. Can override if x, solution are not 'None'.
+
+        The solution is plotted as an animation. The animation can be saved.
+
+        Arguments:
+            x: The grid points at which the solution is evaluated.
+            solution: The solution to the heat equation.
+            saveVideo: Whether or not to save the animation as a video.
+            videoName: The name of the video to save.
+            fps: The frames per second of the video.
+        
+        Return:
+            None
+        """
+        if x == None and solution == None:
+            try:
+                x = self.x
+                solution = self.solution
+            except NameError:
+                print("Call one of solving methods before trying to plot or supply data as function parameters!")
+
+
+        def update(frame):
+            line.set_ydata(solution[frame])
+            return line,
+
+        fig, ax = plt.subplots()
+        line, = ax.plot(x, solution[0])
+        ax.set_xlabel("x")
+        ax.set_ylabel("T")
+        # ax.set_ylim(-1.5, 1.5)
+        # ax.set_xlim(0, 1)
+        plt.suptitle("Solution of the heat equation")
+        plt.grid()
+        plt.tight_layout()
+
+        # Convert from fps to delay in ms
+
+
+        ani = FuncAnimation(fig, update, frames=range(len(self.t_points)), blit=True, interval=1000/fps)
+        plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
+        if saveVideo:
+            writervideo = FFMpegWriter(fps=fps)
+            ani.save(videoName, writer=writervideo)
+
+        plt.show()
+        
     

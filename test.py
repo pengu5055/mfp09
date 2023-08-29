@@ -23,17 +23,17 @@ D = 1e-5
 # Initialize solver
 solver = SpectralSolver(initial_condition, x_range, N, t, D)
 # Solve for the temperature distribution
-T = solver.solve_Numerically()
-T_a = solver.solve_Analytically()
+T, t1 = solver.solve_Numerically()
+T_a, t2 = solver.solve_Analytically()
 
-solver.plot_initial_FFT()
 
 # Plot the results
 sns.set_theme()
+solver.plot_Animation(fps=20)
 
-plt.plot(solver.x, initial_condition(solver.x), label="Initial condition", c="red")
+# plt.plot(solver.x, initial_condition(solver.x), label="Initial condition", c="red")
 for i in range(0, 100, 10):
-    plt.plot(solver.x, T[i], label=f"t = {i/10}", c="black")
+    # plt.plot(solver.x, T[i], label=f"t = {i/10}", c="black")
     pass
 
 # plt.plot(solver.x, T[99], label="t = 10", c="black")
@@ -45,7 +45,7 @@ for i in range(0, 100, 10):
 # plt.plot(solver.x, T_a[99], label="t_a = 10", c="purple")
 
 
-plt.xlabel("x")
-plt.ylabel("T")
-plt.legend()
-plt.show()
+# plt.xlabel("x")
+# plt.ylabel("T")
+# plt.legend()
+# plt.show()

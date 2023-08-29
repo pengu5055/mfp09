@@ -5,38 +5,21 @@ Results are to be plotted with matplotlib.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from src import *
+from newsrc import *
 
+# Define initial condition
+def gaussian_Initial(x, a=2, sigma=1):
+        return np.exp(-((-x+a)/2)**2 / sigma**2)
+# Set x range and mesh size
+x_range = (-10, 10)
+N = 1000
+# Provide time points for the solver
+t_points = np.linspace(0, 10, N)
+# Set diffusion constant
+D = 1e-5
 
-if __name__ == "__main__":
-    x = np.linspace(0, 10, N)
-    t = np.linspace(0, 20, N)
+solver = SpectralSolver(gaussian_Initial, x_range, N, t_points, D)
 
-    # Even simpler initial conditions. Just a sine wave. 
-    freq = 0.3
-    # init = np.sin(2*np.pi*x*freq)
-    # More difficult initial conditions. A superposition of sine waves.
-    # init = np.sin(2*np.pi*x*freq) + np.sin(2*np.pi*x*freq*2) + np.sin(2*np.pi*x*freq*3)
-    # Harder initial condition, perhaps a box function
-    # init = np.zeros(N)
-    # init[(N//2 - 100):(N//2 + 100)] = 1
-    # Hard initial condition, a gaussian
-    init = gaussian(x, 2, 1)
-    # Very hard initial conditions (not really), 
-    # a superposition of gaussians modulated by a sine wave
-    # init = np.sin(2*np.pi*x*freq) * gaussian(x, 2, 0.2) + np.sin(2*np.pi*x*freq*2) * gaussian(x, 8, 0.3) + np.sin(2*np.pi*x*freq*3) * gaussian(x, 1, 0.1)
+T, t1 = solver.solve_Numerically()
 
-    plt.plot(x, init)
-    plt.show()
-
-    # hello_Rank(rank)
-
-    # --- 1D Heat Equation ---
-    # full_solution = MPI_Heat1D(init, t)
-    # if rank == 0:
-    #     plotAnimation(x, full_solution)
-    
-    # --- Single core ---
-    solution = spectral_solver_Heat1D(init, t, numericalSolve=False)
-    
-    plotAnimation(x, solution, numericallySolved=True)
+solver.plot_Animation(fps=60)
