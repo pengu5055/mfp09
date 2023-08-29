@@ -36,6 +36,16 @@ class SpectralSolver:
         self.initial_condition = initial_condition
         self.T_hat_k = fftpack.fftshift(fftpack.fft(initial_condition(self.x)))
         self.D = D
+    
+    def _internal_function_timer(func: Callable):
+        def wrapper(*args, **kwargs):
+            import time
+            start = time.time()
+            result = func(*args, **kwargs)
+            end = time.time()
+            print(f"Function {func.__name__} took {end - start} seconds to run.")
+            return result, start - end
+        return wrapper
 
     def _analytical_step(self, previous_coef: Iterable[float], t: Iterable[float] | float):
         """
@@ -123,39 +133,16 @@ class SpectralSolver:
         """
         Solve the heat equation using the spectral solver _evolve_step.
         """
-        self.solution = np.zeros((self.N, len(self.t_points)))
-        self.intermediary = np.zeros((self.N, len(self.t_points)))
-        # This will take longer than the analytical solution
-        # because we are solving the differential equation
-        # but also because it is not vectorized
-        # TODO: Vectorize this if time allows.
+        self.solution = np.zeros((len(self.t_points), self.N))
+        self.solution[0] = self.initial_condition(self.x)
+        self.previous = np.copy(self.T_hat_k)
 
-        # ERROR Identified: odeint takes coef on first call for first times in 
-        # array self.t_points, but for later calls will take random values of coef.
-        # Potential solution: Specify coef with index i in self.T_hat_k
-        # Potential solution: Use a for loop over self.t_points
-        # for i, coef in enumerate(self.T_hat_k):
-        #     # This will drastically increase time to solve
-        #     # because I will try iterating over each time point.
-        #     # value = (odeint(self._evolve_step, np.real(coef), self.t_points, args=(i,)) \
-        #     #                 + 1j * odeint(self._evolve_step, np.imag(coef), self.t_points, args=(i,))).flatten()
-        #     value = solve_ivp(self._evolve_step, (self.t_points[0], self.t_points[-1]), [coef], args=(i,),
-        #                         method="RK45", t_eval=self.t_points, vectorized=False, rtol=1e-6, atol=1e-6).y #+ \
-        #                       # 1j * solve_ivp(self._evolve_step, (self.t_points[0], self.t_points[-1]), np.imag(coef), args=(i,),
-        #                         # method="RK45", t_eval=self.t_points, vectorized=False, rtol=1e-6, atol=1e-6).y
-        #                       # events=self._dirichlet_boundary).y
-        #     self.intermediary[i] = value
-                
-        value = solve_ivp(self._evolve_step_vectorized, (self.t_points[0], self.t_points[-1]), self.T_hat_k,
-                        method="BDF", t_eval=self.t_points, vectorized=False)
+        for i, t in enumerate(self.t_points[1:]):
+            self.previous = solve_ivp(self._evolve_step_vectorized, (self.t_points[0], self.t_points[-1]), self.previous,
+                                        method="RK45", t_eval=[t], vectorized=True).y.flatten()
+            self.solution[i+1] = fftpack.ifft(fftpack.ifftshift(self.previous)).real
 
-        self.intermediary = value.y            
-        
-        # Process the value into the solution
-        self.solution = np.real(fftpack.ifft(fftpack.ifftshift(self.intermediary), axis=0))
-
-        # Return the transpose of the solution so that first index is time
-        return self.solution.T
+        return self.solution
     
     def plot_initial_FFT(self):
         """
@@ -173,3 +160,5 @@ class SpectralSolver:
         
         plt.suptitle("Initial condition in Fourier space")
         plt.show()
+    
+    

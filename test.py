@@ -33,13 +33,13 @@ sns.set_theme()
 
 plt.plot(solver.x, initial_condition(solver.x), label="Initial condition", c="red")
 for i in range(0, 100, 10):
-    # plt.plot(solver.x, T[i], label=f"t = {i/10}", c="black")
+    plt.plot(solver.x, T[i], label=f"t = {i/10}", c="black")
     pass
 
 # plt.plot(solver.x, T[99], label="t = 10", c="black")
 
 for i in range(0, 100, 10):
-    plt.plot(solver.x, T_a[i], label=f"t_a = {i/10}", c="purple")
+    # plt.plot(solver.x, T_a[i], label=f"t_a = {i/10}", c="purple")
     pass
 
 # plt.plot(solver.x, T_a[99], label="t_a = 10", c="purple")
