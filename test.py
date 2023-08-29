@@ -3,57 +3,44 @@ The following code is used to test the spectral solver for the 1D heat equation.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from src import *
-from integrator import *
+import seaborn as sns
+
+from newsrc import *
 
 
-t = np.linspace(0, 10, N)
-x = np.linspace(0, 10, N)
+# Test new spectral solver
+def initial_condition(x):
+    return np.sin(2*np.pi*x*10)
 
-# Test MPI_Heat1D
-# init = np.sin(2*np.pi*x*10)
-# solution = spectral_solver_Heat1D(init, t)
-# plotAnimation(x, solution, saveVideo=True)
+# Solve for these points
+t = np.linspace(0, 10, 100)
+# Solve for this grid range
+x_range = (0, 1)
+# Solve for this grid size
+N = 100
+# Solve for this diffusion constant
+D = 1e-5
+# Initialize solver
+solver = SpectralSolver(initial_condition, x_range, N, t, D)
+# Solve for the temperature distribution
+T = solver.solve_Numerically()
 
-# Test RK4_5() integrator
-N = int(10e6)
-t = np.linspace(0, 10, N)
-def ivp_2(t, y):
-    """Test IVP to try out integrators.
-    Has the analytical solution 2 * np.exp(-2*t) + np.exp(t)
-    for y(0) = 5
-    """
-    return -2*y + 3 * np.exp(t)
+# Plot the results
+sns.set_theme()
 
-eps = 1e-8
-init = 5
-
-override = {
-            "divergenceTolerance": 10e12,
-            "eps": 10e-6,
-            "stepDownSafetyFactor": 0.8,
-            "stepUpSafetyFactor": 1.05
-        }
-
-sol, err, steps = RK4_5(ivp_2, 0, init, 10, N, outputSteps=True, debug=False,
-                         exitOnWarning=True, disableDivCheck=False)
-analytical = 2 * np.exp(-2*t) + np.exp(t)
-
-print(steps)
-
-# TODO Potential issue identified in steps. After a few iterations, the step
-# size becomes infinite and the solver fails but does not know it has failed.
-# Add check for this. Investigate nan values in steps. 
-# See if correct safety factors and eps are used.
-
-
-plt.plot(t, analytical, label="Analytical")
-plt.plot(steps[0], sol[0], label="RK4(5)")
-plt.legend()
-plt.show()
-
-plt.plot(np.abs(analytical - sol[0]), label="Absolute error")
-plt.plot(err[0], label="Estimated error")
-plt.yscale("log")
+plt.plot(solver.x, initial_condition(solver.x), label="Initial condition")
+# plt.plot(solver.x, T[0], label="t = 0")
+# plt.plot(solver.x, T[10], label="t = 1")
+# plt.plot(solver.x, T[20], label="t = 2")
+# plt.plot(solver.x, T[30], label="t = 3")
+# plt.plot(solver.x, T[40], label="t = 4")
+# plt.plot(solver.x, T[50], label="t = 5")
+# plt.plot(solver.x, T[60], label="t = 6")
+# plt.plot(solver.x, T[70], label="t = 7")
+# plt.plot(solver.x, T[80], label="t = 8")
+# plt.plot(solver.x, T[90], label="t = 9")
+plt.plot(solver.x, T[99], label="t = 10")
+plt.xlabel("x")
+plt.ylabel("T")
 plt.legend()
 plt.show()
