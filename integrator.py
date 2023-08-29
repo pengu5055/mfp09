@@ -144,11 +144,12 @@ def RK4_5(
         y0: float | Iterable[float],
         x_end: float,
         n_steps: int,
+        *args,
         outputSteps: bool = False,
         debug: bool = False,
         exitOnWarning: bool = False,
         disableDivCheck: bool = False,
-        overrideInternalSettings: dict = None
+        overrideInternalSettings: dict = None,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray] | Tuple[np.ndarray, np.ndarray]:
     """
     This is an implementation of the RK4(5) integrator with fixed step size.
@@ -169,6 +170,7 @@ def RK4_5(
         disableDivCheck: If True the function will not check for divergence.
         overrideInternalSettings: If not None, the function will override
             the internal settings with the provided dictionary.
+        args: Additional arguments to pass to the function f.
     
     Returns:
         If outputSteps is True, the function will return the solution,
@@ -219,8 +221,8 @@ def RK4_5(
         task = progress.add_task("Integrating", step_size=h, total=n_steps)
         it = 0  # Iteration counter
         for i in range(n_steps):
-            yn = y0 + RK4_step(f, x0, y0, h)
-            yn_hat = y0 + RK5_step(f, x0, y0, h)
+            yn = y0 + RK4_step(f, x0, y0, h, *args)
+            yn_hat = y0 + RK5_step(f, x0, y0, h, *args)
             error = np.abs(yn - yn_hat)
             if not disableDivCheck:
                 if np.any(np.isnan(yn)) or np.any(yn > divergenceTolerance):
@@ -254,7 +256,7 @@ def RK4_5(
 
 
 
-def RK5_step(f, x, y, h):
+def RK5_step(f, x, y, h, *args):
     """
     This is the integration step of a 5th order Runge-Kutta method.
     It is used in the RK4(5) integrator for error estimation.
@@ -268,17 +270,17 @@ def RK5_step(f, x, y, h):
     Returns:
         The integration step.
     """
-    k1 = h * f(x, y)
-    k2 = h * f(x + h/4, y + k1/4)
-    k3 = h * f(x + 3*h/8, y + 3*k1/32 + 9*k2/32)
-    k4 = h * f(x + 12*h/13, y + 1932*k1/2197 - 7200*k2/2197 + 7296*k3/2197)
-    k5 = h * f(x + h, y + 439*k1/216 - 8*k2 + 3680*k3/513 - 845*k4/4104)
-    k6 = h * f(x + h/2, y - 8*k1/27 + 2*k2 - 3544*k3/2565 + 1859*k4/4104 - 11*k5/40)
+    k1 = h * f(x, y, *args)
+    k2 = h * f(x + h/4, y + k1/4, *args)
+    k3 = h * f(x + 3*h/8, y + 3*k1/32 + 9*k2/32, *args)
+    k4 = h * f(x + 12*h/13, y + 1932*k1/2197 - 7200*k2/2197 + 7296*k3/2197, *args)
+    k5 = h * f(x + h, y + 439*k1/216 - 8*k2 + 3680*k3/513 - 845*k4/4104, *args)
+    k6 = h * f(x + h/2, y - 8*k1/27 + 2*k2 - 3544*k3/2565 + 1859*k4/4104 - 11*k5/40, *args)
     
     k = 16*k1/135 + 6656*k3/12825 + 28561*k4/56430 - 9*k5/50 + 2*k6/55
     return k
 
-def RK4_step(f, x, y, h):
+def RK4_step(f, x, y, h, *args):
     """
     This is the integration step of a 4th order Runge-Kutta method.
     
@@ -291,10 +293,10 @@ def RK4_step(f, x, y, h):
     Returns:
         The integration step.
     """
-    k1 = h * f(x, y)
-    k2 = h * f(x + h/2, y + k1/2)
-    k3 = h * f(x + h/2, y + k2/2)
-    k4 = h * f(x + h, y + k3)
+    k1 = h * f(x, y, *args)
+    k2 = h * f(x + h/2, y + k1/2, *args)
+    k3 = h * f(x + h/2, y + k2/2, *args)
+    k4 = h * f(x + h, y + k3, *args)
 
     k = (k1 + 2*k2 + 2*k3 + k4)/6
     return k

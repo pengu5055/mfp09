@@ -10,6 +10,8 @@ from progressbar import ProgressBar
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 from mpi4py import MPI
 import socket
+from integrator import RK4_5
+from scipy.integrate import odeint
 
 
 # --- Simulation Parameters ---
@@ -17,8 +19,8 @@ LAMBDA = 100
 RHO = 1000
 SIGMA = 1
 C = 200
-N = 1000  # Samples
-T = 1/100  # Sample frequency
+N = 10000  # Samples
+T = 1/1000  # Sample frequency
 a = N*T
 
 # ---  Physical Parameters  ---
@@ -163,7 +165,14 @@ def spectral_solver_Heat1D(init_cond, t_points, gaussian=False, debug=False, num
         plt.show()
 
     if numericalSolve:
-        evolution = euler_integrator(T_evolve, T_hat_k, t_points, k)
+        evolution = np.zeros_like(T_hat_k)
+        # This will be a dirty hack for now but I dont have time to fix it
+        # intermediary = np.asarray([(RK4_5(T_evolve, coef, 0, t_points[-1], n, k[i]))[0]
+        #                        for i, coef in enumerate(T_hat_k)])
+        
+        # Give up with self implementation. Use Scipy instead.
+        evolution = odeint(T_evolve, np.real(T_hat_k), t_points, args=(k,))
+    
     else:
         evolution = T_hat_k * np.exp(-D * k**2 * t_points[:, np.newaxis])
 
@@ -308,7 +317,7 @@ def plot3D(x_vector, t_vector, evolution):
     fig.subplots_adjust(top=0.9)
     plt.show()
 
-def plotAnimation(x, solution, saveVideo=False, videoName="video.mp4", fps=20):
+def plotAnimation(x, solution, numericallySolved=False, saveVideo=False, videoName="video.mp4", fps=20):
     """Plot the time evolution of the temperature distribution.
 
     Arguments:
@@ -326,7 +335,7 @@ def plotAnimation(x, solution, saveVideo=False, videoName="video.mp4", fps=20):
         return line,
 
     fig, ax = plt.subplots()
-    line = ax.plot(x, solution[0], label="Evolved", color="#f79ec6")[0]
+    line = ax.plot(x, solution[40], label="Evolved", color="#f79ec6")[0]
     
     ani = FuncAnimation(fig, update, frames=range(N), blit=True, interval=1/fps)
     plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
