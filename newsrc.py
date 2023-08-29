@@ -37,36 +37,40 @@ class SpectralSolver:
         self.T_hat_k = fftpack.fftshift(fftpack.fft(initial_condition(self.x)))
         self.D = D
 
-    def _analytical_step(self, t: float, x: float):
+    def _analytical_step(self, t: float):
         """
         Evolve the temperature distribution in time.
 
         This is done by evolving the Fourier coefficients in time
-        using the analytical solution.
+        using the analytical solution. This function is inherently
+        different from _evolve_step because it is vectorized. Thus
+        there is no need for a loop over the wave numbers k.
 
         Args:
-            t: The time at which to evaluate the evolution.
-            x: Dummy variable for odeint.
+            t: The times at which to evaluate the evolution.
 
         Return:
             Analytical solution of the evolution.
         """
         return np.exp(-self.D * self.k**2 * t) * self.T_hat_k
     
-    def _evolve_step(self, t: float, x: float):
+    def _evolve_step(self, T_k: float, t: float, i_k: int):
         """
         Evolve the temperature distribution in time.
 
         This is done by evolving the Fourier coefficients in time.
 
         Args:
-            t: The time at which to evaluate the evolution.
-            x: Dummy variable for odeint.
+            T_k: The Fourier coefficient at which to evaluate the evolution.
+            t: The time at which to evaluate the evolution. This is essentially
+                a dummy variable for odeint since there is no explicit time
+                dependence.
+            i_k: The index of the wave number k.
 
         Return:
             Differential equation of the evolution.
         """
-        return - self.D * self.k**2 * t
+        return - self.D * self.k[i_k]**2 * T_k
     
     def _gaussian_FFT_corr(self, freq: float):
         return np.exp(2 * np.pi *1j * freq * self.t_points * (self.N/2))
@@ -91,11 +95,40 @@ class SpectralSolver:
         """
         Solve the heat equation using the spectral solver _evolve_step.
         """
-        self.solution = np.zeros((len(self.t_points), self.N))
-        self.solution[0] = self.initial_condition(self.x)
-        for i, t in enumerate(self.t_points[1:]):
-            self.T_hat_k = odeint(self._evolve_step, np.real(self.T_hat_k), self.t_points, tfirst=True)[0]
-            + 1j * odeint(self._evolve_step, np.imag(self.T_hat_k), self.t_points, tfirst=True)[0]
-            self.solution[i+1] = fftpack.ifft(fftpack.ifftshift(self.T_hat_k)).real
+        self.solution = np.zeros((self.N, len(self.t_points)))
+        self.intermediary = np.zeros((self.N, len(self.t_points)))
+        # This will take longer than the analytical solution
+        # because we are solving the differential equation
+        # but also because it is not vectorized
+        # TODO: Vectorize this if time allows.
+        for i, coef in enumerate(self.T_hat_k):
+            # The function _evolve_step contains wave numbers k which are
+            # a vector. Thus an additional parameter is needed to specify
+            # which wave number we are solving for.
+            value = (odeint(self._evolve_step, np.real(coef), self.t_points, args=(i,)) \
+                        + 1j * odeint(self._evolve_step, np.imag(coef), self.t_points, args=(i,))).flatten()
+            
+            self.intermediary[i] = value
         
-        return self.solution
+        # Process the value into the solution
+        self.solution = np.real(fftpack.ifft(fftpack.ifftshift(self.intermediary), axis=0))
+
+        # Return the transpose of the solution so that first index is time
+        return self.solution.T
+    
+    def plot_initial_FFT(self):
+        """
+        Plot the initial condition in Fourier space.
+        """
+        # Plot real and imaginary parts of the initial condition
+        fig, ax = plt.subplots(2, 1, figsize=(6, 8))
+        ax[0].plot(self.freq, np.real(self.T_hat_k))
+        ax[0].set_xlabel("frequency")
+        ax[0].set_ylabel("Re(T_hat_k)")
+
+        ax[1].plot(self.freq, np.imag(self.T_hat_k))
+        ax[1].set_xlabel("frequency")
+        ax[1].set_ylabel("Im(T_hat_k)")
+        
+        plt.suptitle("Initial condition in Fourier space")
+        plt.show()
