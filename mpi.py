@@ -71,9 +71,21 @@ class MPI_Node():
         """
         n = len(data)
         divided = []
-        for i in range(self.size):
-            divided.append(data[i * n // self.size:(i + 1) * n // self.size])
-    
+        # One x point evolved in time is one data row
+        total_data_rows = n
+        rows_per_node = total_data_rows // self.size
+        extra_rows = total_data_rows % self.size
+
+        rows_distribution = [rows_per_node] * self.size
+
+        # This will never go out of range, since the
+        # extra rows cannot be more than the number of nodes.
+        for i in range(extra_rows):
+            rows_distribution[i] += 1
+
+        # Distribute the data
+        divided = [data[i:i+rows_distribution[self.rank]] for i in range(0, total_data_rows, rows_distribution[self.rank])]
+
         return divided[self.rank]
     
     def _gather_data(self, data, isRoot=False):
