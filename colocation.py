@@ -48,17 +48,49 @@ class ColocationSolver:
         return wrapper
     
     @_internal_function_timer
-    def solve_Manually(self) -> Tuple[np.ndarray, np.ndarray]:
-        pass
+    def solve_Manually(self) -> np.ndarray:
+        """
+        This method of solving the PDE uses the colocation method but 
+        is implemented manually.
+
+        It will gather all required data from the object itself and solve
+        the PDE. The solution is stored in the object itself but is also
+        returned as well as the time it took to solve the PDE.
+        """
+        self.solution_m = np.zeros((len(self.t_points), self.N))
+        f_init_vec = np.zeros(self.N)
+        f_init_vec = self.initial_condition(self.x)
+        c_init_vec = np.zeros(self.N)
+
+        # Create tridiagonal matricies of coefficients
+        A = diags([1, 4, 1], [-1, 0, 1], shape=(self.N, self.N)).toarray()
+        B = ((6*self.D)/self.dx**2) * diags([1, -2, 1], [-1, 0, 1], shape=(self.N, self.N)).toarray()
+
+        A_inv = np.linalg.inv(A)
+
+        # 1. Solve: A * c_init_vec = f_init_vec
+        c_init_vec = self._do_TDMA(A, f_init_vec)
+
+        # 2. Solve: A * dc/dt = B * c -> dc/dt = (c[i+1] - c[i]) / dt  <= Backward Euler
+        c = np.zeros((len(self.t_points), self.N))
+        c[0] = c_init_vec
+        for i in range(1, len(self.t_points)):
+            c[i] = A_inv*B*self.dt @ c[i-1] + c[i-1]
+        
+        # 3. Solve: A * c = f
+        self.solution_m = A @ c
+
+        return self.solution_m
     
     @_internal_function_timer
     def solve_Properly(self) -> np.ndarray:
         """
         This method of solving the PDE uses bulit-in functions from scipy.
-        """
-        # Lets first try to fit a BSpline to the initial condition
-        # using the scipy.interpolate.BSpline class and the splrep function.
 
+        It will gather all required data from the object itself and solve
+        the PDE. The solution is stored in the object itself but is also
+        returned as well as the time it took to solve the PDE.
+        """
         self.solution = np.zeros((len(self.t_points), self.N))
         f_init_vec = np.zeros(self.N)
         f_init_vec = self.initial_condition(self.x)
@@ -84,19 +116,14 @@ class ColocationSolver:
         # 1. Solve: A * c_init_vec = f_init_vec
         c_init_vec = solve_banded((1, 1), A_banded, f_init_vec)
         
-        # 2. Solve: A * dc/dt = B * c -> dc/dt = (c[i] - c[i-1]) / dt  <= Backward Euler
+        # 2. Solve: A * dc/dt = B * c -> dc/dt = (c[i+1] - c[i]) / dt  <= Forward Euler
         c = np.zeros((len(self.t_points), self.N))
         c[0] = c_init_vec
         for i in range(1, len(self.t_points)):
             c[i] = A_inv*B*self.dt @ c[i-1] + c[i-1]
 
-
         # 3. Solve: A * c = f
         self.solution = A @ c
-
-        # DEBUG: plots to visualize happening
-        # t, c, k = splrep(self.x, self.solution[0], s=0, k=3)
-        # BS = BSpline(t, c, k, extrapolate=False)
 
         return self.solution
 
