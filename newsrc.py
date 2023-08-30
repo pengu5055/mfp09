@@ -68,7 +68,9 @@ class SpectralSolver:
         self.x = x
         self.x_range = (x[0], x[-1])
         self.dx = self.x[1] - self.x[0]
+        self.k = 2 * np.pi * fftpack.fftshift(fftpack.fftfreq(len(x), d=self.dx))
         self.N = len(x)
+        self.T_hat_k = fftpack.fftshift(fftpack.fft(self.initial_condition(self.x)))
 
     def _analytical_step(self, previous_coef: Iterable[float], t: Iterable[float] | float):
         """

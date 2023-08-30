@@ -4,6 +4,7 @@ Test the MPI_Node class.
 from mpi import MPI_Node
 import numpy as np
 from colocation import ColocationSolver
+from newsrc import SpectralSolver
 
 # Test new parallel wrapper for solver
 def initial_condition(x):
@@ -20,5 +21,5 @@ D = 1e-5
 solver = ColocationSolver(initial_condition, x_range, N, t, D)
 
 node = MPI_Node(solver)
-node.solve()
+node.solve(method="manual")
 node.plot_Animation(fps=20)

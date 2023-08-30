@@ -96,7 +96,7 @@ class ColocationSolver:
         
         # 3. Solve: A * c = f
         # self.solution_m = A @ c
-        self.solution_m = A @ c.T
+        self.solution_m = (A @ c.T).T
 
         return self.solution_m
     
@@ -141,7 +141,7 @@ class ColocationSolver:
             c[i] = A_inv*B*self.dt @ c[i-1] + c[i-1]
 
         # 3. Solve: A * c = f
-        self.solution = A @ c
+        self.solution = (A @ c.T).T
 
         return self.solution
 

@@ -108,11 +108,11 @@ class MPI_Node():
         elif isRoot:
             output = np.zeros((self.x_backup.shape[0], self.t_points.shape[0]))
             for i in range(self.size):
-                output[i*self.rows_distribution[i]:(i+1)*self.rows_distribution[i], :] = gathered_data[i]
+                output[i*self.rows_distribution[i]:(i+1)*self.rows_distribution[i], :] = gathered_data[i].T
 
             return output.T
 
-    def solve(self, method="manual", partialOutput=False):
+    def solve(self, method=None, partialOutput=False):
         """
         Parallel solve the PDE but in chunks.
 
@@ -127,8 +127,16 @@ class MPI_Node():
             solution: The partial solution of the PDE.
             time: The time it took to solve the PDE.
         """
+        # Set defaults for method
+        if method is None:
+            if type(self.solver) == ColocationSolver:
+                method = "proper"
+            elif type(self.solver) == SpectralSolver:
+                method = "analytical"
+
         x = self._distribute_data(self.x)
         self.solver._override_x(x)
+
         if type(self.solver) == ColocationSolver:
             if method == "manual":
                 solution, time = self.solver.solve_Manually()
