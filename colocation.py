@@ -6,7 +6,7 @@ We're going to need to solve matrix equations, so we'll use numpy.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, FFMpegWriter
 from scipy import fftpack
 from typing import Tuple, Callable, List, Iterable
 from scipy.interpolate import BSpline, splrep
@@ -47,6 +47,23 @@ class ColocationSolver:
             return result, start - end
         return wrapper
     
+    def _override_x(self, x):
+        """
+        Override the x grid with a new one. This is due to the fact that MPI
+        will distribute the grid points to the nodes. The nodes will need to
+        know the grid points they are responsible for but the wrapper class
+        will take the already initialized solver as an argument. Therefore,
+        the nodes will need to override the x grid.
+
+        Parameters:
+            x: The new x grid.
+        """
+        # TODO: Check if x is of correct size
+        self.x = x
+        self.x_range = (x[0], x[-1])
+        self.dx = self.x[1] - self.x[0]
+        self.N = len(x)
+
     @_internal_function_timer
     def solve_Manually(self) -> np.ndarray:
         """

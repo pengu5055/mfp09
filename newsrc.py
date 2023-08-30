@@ -52,6 +52,21 @@ class SpectralSolver:
             print(f"Function {func.__name__} took {end - start} seconds to run.")
             return result, start - end
         return wrapper
+    
+    def _override_x(self, x):
+        """
+        Override the x grid with a new one. This is due to the fact that MPI
+        will distribute the grid points to the nodes. The nodes will need to
+        know the grid points they are responsible for but the wrapper class
+        will take the already initialized solver as an argument. Therefore,
+        the nodes will need to override the x grid.
+
+        Parameters:
+            x: The new x grid.
+        """
+        self.x = x
+        self.x_range = (x[0], x[-1])
+        self.dx = self.x[1] - self.x[0]
 
     def _analytical_step(self, previous_coef: Iterable[float], t: Iterable[float] | float):
         """
