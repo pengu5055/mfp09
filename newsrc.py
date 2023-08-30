@@ -119,15 +119,15 @@ class SpectralSolver:
         """
         Solve the heat equation using the spectral solver and _analytical_step.
         """
-        self.solution = np.zeros((len(self.t_points), self.N))
-        self.solution[0] = self.initial_condition(self.x)
+        self.solution_a = np.zeros((len(self.t_points), self.N))
+        self.solution_a[0] = self.initial_condition(self.x)
         # Absolutely need previous coefficients to be able to iterate and evolve.
         self.previous = np.copy(self.T_hat_k)
         for i, t in enumerate(self.t_points[1:]):
             self.previous = self._analytical_step(self.previous, t)        
-            self.solution[i+1] = fftpack.ifft(fftpack.ifftshift(self.previous)).real
+            self.solution_a[i+1] = fftpack.ifft(fftpack.ifftshift(self.previous)).real
         
-        return self.solution
+        return self.solution_a
 
     @_internal_function_timer
     def solve_Numerically(self):
@@ -164,9 +164,12 @@ class SpectralSolver:
     
     def plot_Animation(self, x: Iterable[float] | None = None, 
                        solution: Iterable[float] | None = None,
+                       method: str = "analytical",
+                       color: str = "black",
                        saveVideo: bool = False, 
                        videoName: str = "animation.mp4", 
-                       fps: int = 20):
+                       fps: int = 20,
+                    ):
         """
         Plot the solution as an animation. Will try to get computed solution
         from solver itself. Can override if x, solution are not 'None'.
@@ -176,6 +179,9 @@ class SpectralSolver:
         Arguments:
             x: The grid points at which the solution is evaluated.
             solution: The solution to the heat equation.
+            method: The method used to solve the heat equation. Can be either
+                "analytical" or "numerical".
+            color: The color of the plotted solution.
             saveVideo: Whether or not to save the animation as a video.
             videoName: The name of the video to save.
             fps: The frames per second of the video.
@@ -183,30 +189,33 @@ class SpectralSolver:
         Return:
             None
         """
-        if x == None and solution == None:
+        if np.all(x == None) and np.all(solution == None):
             try:
                 x = self.x
-                solution = self.solution
+                if method == "analytical":
+                    solution = self.solution_a
+                elif method == "numerical":
+                    solution = self.solution
+                else:
+                    raise ValueError("Method must be either 'analytical' or 'numerical'!")
             except NameError:
                 print("Call one of solving methods before trying to plot or supply data as function parameters!")
 
 
         def update(frame):
             line.set_ydata(solution[frame])
+            line.set_label(f"t = {frame/fps:.2f} s")
+            line.set_color(color)
             return line,
 
         fig, ax = plt.subplots()
-        line, = ax.plot(x, solution[0])
+        line, = ax.plot(x, solution[0], label="t = 0 s", c=color)
         ax.set_xlabel("x")
         ax.set_ylabel("T")
         # ax.set_ylim(-1.5, 1.5)
         # ax.set_xlim(0, 1)
         plt.suptitle("Solution of the heat equation")
-        plt.grid()
-        plt.tight_layout()
-
-        # Convert from fps to delay in ms
-
+        plt.legend()
 
         ani = FuncAnimation(fig, update, frames=range(len(self.t_points)), blit=True, interval=1000/fps)
         plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
@@ -215,5 +224,51 @@ class SpectralSolver:
             ani.save(videoName, writer=writervideo)
 
         plt.show()
-        
     
+    def plot_Animation_both(self, color1 = "black",
+                            color2 = "purple",
+                            saveVideo: bool = False,
+                            videoName: str = "animation.mp4",
+                            fps: int = 20):
+        """
+        Plot the solution as an animation. Will try to get computed solution
+        from solver itself. Can override if x, solution are not 'None'.
+        
+
+        The solution is plotted as an animation. The animation can be saved.
+        """
+        try:
+            x = self.x
+            solution = self.solution
+            solution_a = self.solution_a
+
+        except NameError: 
+            print("Call BOTH of solving methods before trying to plot!")        
+
+        def update(frame):
+            line1.set_ydata(solution[frame])
+            line1.set_label(f"Num t = {frame/fps:.2f} s")
+            line1.set_color(color1)
+            line2.set_ydata(solution_a[frame])
+            line2.set_label(f"Ana t = {frame/fps:.2f} s")
+            line2.set_color(color2)
+            return line1,
+
+        fig, ax = plt.subplots()
+        line1, = ax.plot(x, solution[0], label="Num t = 0 s", c=color1)
+        line2, = ax.plot(x, solution_a[0], label="Ana t = 0 s", c=color2)
+        ax.set_xlabel("x")
+        ax.set_ylabel("T")
+        # ax.set_ylim(-1.5, 1.5)
+        # ax.set_xlim(0, 1)
+        plt.suptitle("Comparison of solutions to the heat equation")
+        plt.legend()
+
+        ani = FuncAnimation(fig, update, frames=range(len(self.t_points)), blit=True, interval=1000/fps)
+        plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
+        if saveVideo:
+            writervideo = FFMpegWriter(fps=fps)
+            ani.save(videoName, writer=writervideo)
+
+        plt.show()
+

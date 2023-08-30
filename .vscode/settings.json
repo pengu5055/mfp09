@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "integrators",
         "spectral",
-        "MPI"
+        "MPI",
+        "plots"
     ]
 }
