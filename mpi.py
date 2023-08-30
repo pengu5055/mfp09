@@ -76,15 +76,16 @@ class MPI_Node():
         rows_per_node = total_data_rows // self.size
         extra_rows = total_data_rows % self.size
 
-        rows_distribution = [rows_per_node] * self.size
+        self.rows_distribution = [rows_per_node] * self.size
 
         # This will never go out of range, since the
         # extra rows cannot be more than the number of nodes.
         for i in range(extra_rows):
-            rows_distribution[i] += 1
+            self.rows_distribution[i] += 1
 
         # Distribute the data
-        divided = [data[i:i+rows_distribution[self.rank]] for i in range(0, total_data_rows, rows_distribution[self.rank])]
+        divided = [data[i:i+self.rows_distribution[self.rank]] for i 
+                   in range(0, total_data_rows, self.rows_distribution[self.rank])]
 
         return divided[self.rank]
     
@@ -105,9 +106,11 @@ class MPI_Node():
         if not isRoot:
             return gathered_data  # comm.gather returns None on non-root ranks
         elif isRoot:
-            gathered_data = np.asarray(gathered_data).transpose(1, 0, 2).reshape(self.x_backup.shape[0], self.t_points.shape[0]).T
+            output = np.zeros((self.x_backup.shape[0], self.t_points.shape[0]))
+            for i in range(self.size):
+                output[i*self.rows_distribution[i]:(i+1)*self.rows_distribution[i], :] = gathered_data[i]
 
-            return gathered_data
+            return output.T
 
     def solve(self, method="manual", partialOutput=False):
         """

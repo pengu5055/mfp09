@@ -21,4 +21,4 @@ solver = ColocationSolver(initial_condition, x_range, N, t, D)
 
 node = MPI_Node(solver)
 node.solve()
-# node.plot_Animation(fps=20)
+node.plot_Animation(fps=20)
