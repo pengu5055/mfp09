@@ -3,6 +3,7 @@
         "integrators",
         "spectral",
         "MPI",
-        "plots"
+        "plots",
+        "colocation"
     ]
 }
