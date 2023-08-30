@@ -67,33 +67,35 @@ class ColocationSolver:
         # Create tridiagonal matricies of coefficients
         # A = diags([1, 4, 1], [-1, 0, 1], shape=(self.N, self.N)).toarray()
         diagonals = [[1] * (self.N - 1), [4] * self.N, [1] * (self.N - 1)]
-        A = np.diag(diagonals[0], -1) + np.diag(diagonals[1], 0) + np.diag(diagonals[2], 1)
+        A = diags([1, 4, 1], [-1, 0, 1], shape=(self.N, self.N)).toarray()
 
         # Convert the tridiagonal matrix to a dense banded matrix
         A_banded = np.zeros((3, self.N))
         A_banded[0] = np.pad(diagonals[0], (1, 0), mode="constant")
         A_banded[1] = np.pad(diagonals[1], (0, 0), mode="constant")
         A_banded[2] = np.pad(diagonals[2], (0, 1), mode="constant")
+        A_inv = np.linalg.inv(A)
+
+        # (np.round(np.linalg.inv(A_inv))) <- Rounding may help stop propagation of errors due to 
+        # floating point precision (non zero values in the inverse matrix)
 
         B = ((6*self.D)/self.dx**2) * diags([1, -2, 1], [-1, 0, 1], shape=(self.N, self.N)).toarray()
 
-        # For initial condition it has to hold that
-        # A * c_vec = f_init_vec
-        eps = 1e-6
-
+        # 1. Solve: A * c_init_vec = f_init_vec
         c_init_vec = solve_banded((1, 1), A_banded, f_init_vec)
-        c_init_vec2 = self._do_TDMA(A, f_init_vec)
+        
+        # 2. Solve: A * dc/dt = B * c -> dc/dt = (c[i] - c[i-1]) / dt  <= Backward Euler
+        c = np.zeros((len(self.t_points), self.N))
+        c[0] = c_init_vec
+        for i in range(1, len(self.t_points)):
+            c[i] = A_inv*B*self.dt @ c[i-1] + c[i-1]
 
 
+        self.solution = c
 
         # DEBUG: plots to visualize happening
-        t, c, k = splrep(self.x, self.solution[0], s=0, k=3)
-        print(c)
-        BS = BSpline(t, c, k, extrapolate=False)
-
-        # plt.scatter(self.x, self.solution[0], label="Initial condition", c="red")
-        # plt.plot(self.x, BS(self.x), label="BSpline", c="blue")
-        # plt.show()
+        # t, c, k = splrep(self.x, self.solution[0], s=0, k=3)
+        # BS = BSpline(t, c, k, extrapolate=False)
 
         return self.solution
 
@@ -121,3 +123,66 @@ class ColocationSolver:
             c_new[i] = beta[i+1] - alpha[i+1] * c_new[i+1]
         
         return c_new
+
+    def plot_Animation(self, x: Iterable[float] | None = None, 
+                       solution: Iterable[float] | None = None,
+                       method: str = "proper",
+                       color: str = "black",
+                       saveVideo: bool = False, 
+                       videoName: str = "animation.mp4", 
+                       fps: int = 20,
+                    ):
+        """
+        Plot the solution as an animation. Will try to get computed solution
+        from solver itself. Can override if x, solution are not 'None'.
+
+        The solution is plotted as an animation. The animation can be saved.
+
+        Arguments:
+            x: The grid points at which the solution is evaluated.
+            solution: The solution to the heat equation.
+            method: The method used to solve the heat equation. Can be either
+                "proper" or "manual".
+            color: The color of the plotted solution.
+            saveVideo: Whether or not to save the animation as a video.
+            videoName: The name of the video to save.
+            fps: The frames per second of the video.
+        
+        Return:
+            None
+        """
+        if np.all(x == None) and np.all(solution == None):
+            try:
+                x = self.x
+                if method == "proper":
+                    solution = self.solution
+                elif method == "manual":
+                    solution = self.solution_m
+                else:
+                    raise ValueError("Method must be either 'analytical' or 'numerical'!")
+            except NameError:
+                print("Call one of solving methods before trying to plot or supply data as function parameters!")
+
+
+        def update(frame):
+            line.set_ydata(solution[frame])
+            line.set_color(color)
+            L.get_texts()[0].set_text(f"t = {frame/fps:.2f} s")
+            return line,
+
+        fig, ax = plt.subplots()
+        line, = ax.plot(x, solution[0], label="t = 0 s", c=color)
+        ax.set_xlabel("x")
+        ax.set_ylabel("T")
+        # ax.set_ylim(-1.5, 1.5)
+        # ax.set_xlim(0, 1)
+        plt.suptitle("Solution of the heat equation")
+        L = plt.legend()
+
+        ani = FuncAnimation(fig, update, frames=range(len(self.t_points)), blit=False, interval=1000/fps)
+        plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
+        if saveVideo:
+            writervideo = FFMpegWriter(fps=fps)
+            ani.save(videoName, writer=writervideo)
+
+        plt.show()
