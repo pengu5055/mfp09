@@ -25,5 +25,5 @@ T, t1 = solver.solve_Numerically()
 T_a, t2 = solver.solve_Analytically()
 
 # solver.plot_Animation(fps=60, method="analytical", color="green")
-solver.plot_Heatmap_sns()
+solver.plot_Hexgrid()
 

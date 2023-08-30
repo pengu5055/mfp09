@@ -340,6 +340,20 @@ class SpectralSolver:
         x_centers = np.arange(0.5 * bin_size_x, data.shape[1], bin_size_x)
         y_centers = np.arange(0.5 * bin_size_y, data.shape[0], bin_size_y)
 
+        hexagon_width = (x_centers[1] - x_centers[0]) / 2
+        hexagon_height = (y_centers[1] - y_centers[0]) * 3**0.5 / 2
+
+        x_store_center = []
+        y_store_center = []
+        for i in range(n_bins_x):
+            x = x_centers[i]
+            # Shift every other row
+            shift_y = 0 if i % 2 == 0 else hexagon_width
+            for j in range(n_bins_y):
+                y = y_centers[j] + shift_y
+                x_store_center.append(x)
+                y_store_center.append(y)
+            
         fig, ax = plt.subplots()
         norm = plt.Normalize(vmin=np.min(data), vmax=np.max(data))
         
@@ -350,24 +364,24 @@ class SpectralSolver:
         x_vec = x_centers.repeat(n_bins_y)
         y_vec = np.tile(y_centers, n_bins_x)
 
-        offsets = np.column_stack((x_vec, y_vec))
+        store_center = np.column_stack((x_store_center, y_store_center))
 
         facecolors = [cmr.flamingo(norm(value)) for value in grid.ravel()]
         collection = RegularPolyCollection(
             numsides=6, 
-            rotation=0, 
-            sizes=(50,),
+            rotation=60, 
+            sizes=(100,),
             facecolors=facecolors,
-            offsets=offsets,
+            offsets=store_center,
             )
-        ax.add_collection(collection, autolim=True)
+        ax.add_collection(collection) #, autolim=True)
         ax.set_aspect('equal')
 
         plt.xlabel("x")
         plt.ylabel("t [s]")
         plt.title("Evolution of the solution to the heat equation")
-        plt.xlim(self.x_range[0], self.x_range[1])
-        plt.ylim(self.t_points[0], self.t_points[-1])
+        # plt.xlim(self.x_range[0], self.x_range[1])
+        # plt.ylim(self.t_points[0], self.t_points[-1])
         plt.show()
 
     def plot_Heat(self):
