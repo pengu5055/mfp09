@@ -111,7 +111,7 @@ class MPI_Node():
                 output[i*self.rows_distribution[i]:(i+1)*self.rows_distribution[i], :] = gathered_data[i].T
 
             return output.T
-
+    @_internal_function_timer
     def solve(self, method=None, partialOutput=False):
         """
         Parallel solve the PDE but in chunks.
@@ -165,10 +165,10 @@ class MPI_Node():
             raise ValueError("The rank must be an integer.")
         
         if partialOutput:
-            return self.solution, self.partialSolution, time
+            return self.solution, self.partialSolution
         else:
             # Return the partial solution more as a proof of concept
-            return solution, time    
+            return solution
         
     def plot_Animation(self,
                        color: str = "black",
