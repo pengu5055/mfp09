@@ -1,10 +1,13 @@
 """
 This file should contain the wrapper class for enabling MPI parallelization.
+The wrapper class should be able to take a solver as an argument and then
+distribute the grid points to the nodes. The nodes should then be able to
+solve the PDE in parallel and then gather the solution to the root node.
 """
 from mpi4py import MPI
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+from matplotlib.animation import FuncAnimation, FFMpegWriter
 from newsrc import *
 from colocation import *
 from typing import Tuple, Callable, List, Iterable
@@ -17,6 +20,7 @@ class MPI_Node():
                  ) -> None:
         """
         Initialize the MPI node.
+        Number of total points in the grid has to be divisible by the number of nodes.
         """
         # Init MPI
         self.comm = MPI.COMM_WORLD
@@ -35,6 +39,8 @@ class MPI_Node():
         self.t_points = solver.t_points
         self.D = solver.D
         self.x = np.linspace(self.x_range[0], self.x_range[1], self.N)
+        if self.rank == 0:
+            self.x_backup = np.copy(self.x)
         self.dx = self.x[1] - self.x[0]
         self.dt = self.t_points[1] - self.t_points[0]
         print(f"Rank {self.rank} has initialized the solver.")
@@ -87,10 +93,10 @@ class MPI_Node():
         if not isRoot:
             return gathered_data  # comm.gather returns None on non-root ranks
         elif isRoot:
-        # Transform the list of shape (5, 200, 200) into (1000, 1000)
-            accumulated_data = np.concatenate(accumulated_data, axis=1)
+            gathered_data = np.asarray(gathered_data).transpose(1, 0, 2).reshape(self.x_backup.shape[0], self.t_points.shape[0]).T
+
             return gathered_data
- 
+
     def solve(self, method="manual", partialOutput=False):
         """
         Parallel solve the PDE but in chunks.
@@ -171,13 +177,11 @@ class MPI_Node():
         # Only rank 0 should plot
         if self.rank != 0:
             return None
-
-        if np.all(x == None) and np.all(solution == None):
-            try:
-                x = self.x
-                solution = self.solution
-            except NameError:
-                print("Call solution method before trying to plot!")
+        try:
+            x = self.x_backup
+            solution = self.solution
+        except NameError:
+            print("Call solution method before trying to plot!")
 
         def update(frame):
             line.set_ydata(solution[frame])

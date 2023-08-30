@@ -64,9 +64,11 @@ class SpectralSolver:
         Parameters:
             x: The new x grid.
         """
+        # TODO: Check if x is of correct size
         self.x = x
         self.x_range = (x[0], x[-1])
         self.dx = self.x[1] - self.x[0]
+        self.N = len(x)
 
     def _analytical_step(self, previous_coef: Iterable[float], t: Iterable[float] | float):
         """

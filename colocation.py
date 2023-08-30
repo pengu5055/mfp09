@@ -95,7 +95,8 @@ class ColocationSolver:
             c[i] = A_inv*B*self.dt @ c[i-1] + c[i-1]
         
         # 3. Solve: A * c = f
-        self.solution_m = A @ c
+        # self.solution_m = A @ c
+        self.solution_m = A @ c.T
 
         return self.solution_m
     
@@ -143,9 +144,6 @@ class ColocationSolver:
         self.solution = A @ c
 
         return self.solution
-
-    def BSpline(self):
-        pass
 
     def _do_TDMA(self, A, f):
         """
