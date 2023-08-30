@@ -8,9 +8,12 @@ methods for solving the heat equation and plotting the solution.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
+from matplotlib import font_manager as fm
+import seaborn as sns
 from scipy import fftpack
-from scipy.integrate import odeint, solve_ivp
+from scipy.integrate import solve_ivp
 from typing import Callable, Tuple, Iterable
+import cmasher as cmr
 
 # Initialize class with grid size N and time steps t
 # TODO: Add option to use MPI
@@ -204,8 +207,8 @@ class SpectralSolver:
 
         def update(frame):
             line.set_ydata(solution[frame])
-            line.set_label(f"t = {frame/fps:.2f} s")
             line.set_color(color)
+            L.get_texts()[0].set_text(f"t = {frame/fps:.2f} s")
             return line,
 
         fig, ax = plt.subplots()
@@ -215,9 +218,9 @@ class SpectralSolver:
         # ax.set_ylim(-1.5, 1.5)
         # ax.set_xlim(0, 1)
         plt.suptitle("Solution of the heat equation")
-        plt.legend()
+        L = plt.legend()
 
-        ani = FuncAnimation(fig, update, frames=range(len(self.t_points)), blit=True, interval=1000/fps)
+        ani = FuncAnimation(fig, update, frames=range(len(self.t_points)), blit=False, interval=1000/fps)
         plt.rcParams['animation.ffmpeg_path'] ='C:\\Media\\ffmpeg\\bin\\ffmpeg.exe' 
         if saveVideo:
             writervideo = FFMpegWriter(fps=fps)
@@ -271,4 +274,41 @@ class SpectralSolver:
             ani.save(videoName, writer=writervideo)
 
         plt.show()
+
+    def plot_Heatmap(self, method: str = "analytical"):
+        """
+        Plot the solution as a heatmap.
+        """
+        plt.rcParams.update({'font.family': 'Verdana'})
+        fig, ax = plt.subplots()
+        if method == "analytical":
+            data = np.copy(self.solution_a)
+            data = np.flip(data, axis=0)
+        elif method == "numerical":
+            data = np.copy(self.solution)
+            data = np.flip(data, axis=0)
+        else:
+            raise ValueError("Method must be either 'analytical' or 'numerical'!")
+
+        plt.imshow(data, cmap=cmr.flamingo, aspect="auto", vmin=np.min(data), vmax=np.max(data),
+                   extent=[self.x_range[0], self.x_range[1], self.t_points[0], self.t_points[-1]])
+
+        x_ticks = np.linspace(self.x_range[0],self.x_range[1], 10)
+        plt.xticks(x_ticks)
+        y_ticks = np.linspace(0, self.t_points[-1], 10)
+        plt.yticks(y_ticks)
+
+        plt.xlabel("x")
+        plt.ylabel("t [s]")
+        plt.title("Evolution of the solution to the heat equation")
+        plt.show()
+
+    def plot_Hexbin(self, method: str = "analytical"):
+        """
+        Experimental function to plot the solution as a hexbin plot
+        instead of a heatmap.
+        """
+        pass
+
+
 
