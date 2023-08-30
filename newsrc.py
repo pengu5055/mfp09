@@ -9,11 +9,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 from matplotlib.patches import RegularPolygon
+from matplotlib.collections import RegularPolyCollection
 import seaborn as sns
 from scipy import fftpack
 from scipy.integrate import solve_ivp
 from typing import Callable, Tuple, Iterable
 import cmasher as cmr
+import pandas as pd
 
 # Initialize class with grid size N and time steps t
 # TODO: Add option to use MPI
@@ -295,7 +297,7 @@ class SpectralSolver:
 
         x_ticks = np.linspace(self.x_range[0],self.x_range[1], 10)
         plt.xticks(x_ticks)
-        y_ticks = np.linspace(0, self.t_points[-1], 10)
+        y_ticks = np.linspace(self.t_points[0], self.t_points[-1], 10)
         plt.yticks(y_ticks)
 
         plt.xlabel("x")
@@ -308,7 +310,7 @@ class SpectralSolver:
         Experimental function to plot the solution as a hexbin plot
         instead of a heatmap.
         """
-        fig, ax = plt.subplots()
+        plt.rcParams.update({'font.family': 'Verdana'})
         if method == "analytical":
             data = np.copy(self.solution_a)
             data = np.flip(data, axis=0)
@@ -324,37 +326,91 @@ class SpectralSolver:
         bin_size_y = (data.shape[1] - 1)/n_bins_y
 
         grid = np.zeros((n_bins_x, n_bins_y))
-        norm = plt.Normalize(vmin=np.min(data), vmax=np.max(data))
+        
         for i in range(n_bins_x):
             for j in range(n_bins_y):
-                center_x = (i + 0.5) * bin_size_x
-                center_y = (j + 0.5) * bin_size_y
-
-                # Create a hexagon
-                hexagon = RegularPolygon((center_x, center_y), numVertices=6, radius=bin_size_x / 2, facecolor='None', edgecolor='k')
                 start_x = i*int(bin_size_x)
                 end_x = (i+1)*int(bin_size_x)
                 start_y = j*int(bin_size_y)
                 end_y = (j+1)*int(bin_size_y)
 
                 bin_value = np.mean(data[start_x:end_x, start_y:end_y])
-
-                hexagon.set_facecolor(cmr.flamingo(bin_value), norm=norm)
-
                 grid[i, j] = bin_value
-
-                # Add the hexagon to the plot
-                ax.add_patch(hexagon)
 
         x_centers = np.arange(0.5 * bin_size_x, data.shape[1], bin_size_x)
         y_centers = np.arange(0.5 * bin_size_y, data.shape[0], bin_size_y)
 
+        fig, ax = plt.subplots()
+        norm = plt.Normalize(vmin=np.min(data), vmax=np.max(data))
+        
+        hexagon = RegularPolygon((0, 0), numVertices=6, radius=bin_size_x / 2,
+                                  facecolor=cmr.flamingo(norm(0)), edgecolor='k')
+        ax.add_patch(hexagon)
+
         x_vec = x_centers.repeat(n_bins_y)
         y_vec = np.tile(y_centers, n_bins_x)
 
+        offsets = np.column_stack((x_vec, y_vec))
+
+        facecolors = [cmr.flamingo(norm(value)) for value in grid.ravel()]
+        collection = RegularPolyCollection(
+            numsides=6, 
+            rotation=0, 
+            sizes=(50,),
+            facecolors=facecolors,
+            offsets=offsets,
+            )
+        ax.add_collection(collection, autolim=True)
         ax.set_aspect('equal')
 
         plt.xlabel("x")
         plt.ylabel("t [s]")
         plt.title("Evolution of the solution to the heat equation")
+        plt.xlim(self.x_range[0], self.x_range[1])
+        plt.ylim(self.t_points[0], self.t_points[-1])
+        plt.show()
+
+    def plot_Heat(self):
+        """
+        Plot the heat of the solution as a function of time.
+        """
+        plt.rcParams.update({'font.family': 'Verdana'})
+        fig, ax = plt.subplots()
+        ax.plot(self.t_points, np.sum(self.solution, axis=1))
+        ax.set_xlabel("t [s]")
+        ax.set_ylabel("Heat")
+        ax.set_title("Heat of the solution to the heat equation")
+        plt.show()
+
+    def plot_Heatmap_sns(self, method: str = "analytical"):
+        """
+        Plot the solution as a heatmap using seaborn.
+        """
+        if method == "analytical":
+            data = np.copy(self.solution_a)
+            data = np.flip(data, axis=0)
+        elif method == "numerical":
+            data = np.copy(self.solution)
+            data = np.flip(data, axis=0)
+        else:
+            raise ValueError("Method must be either 'analytical' or 'numerical'!") 
+
+        data = pd.DataFrame(data)
+
+        x_ticks = np.round(np.linspace(self.x_range[0],self.x_range[1], data.shape[0]))
+        y_ticks = np.round(np.linspace(self.t_points[0], self.t_points[-1], data.shape[1]))
+
+        data.columns = x_ticks
+        data.index = y_ticks
+
+        sns.set_theme()
+        fig, ax = plt.subplots()
+        sns.heatmap(data, cmap=cmr.flamingo, ax=ax)
+
+        plt.xlabel("x")
+        plt.ylabel("t [s]")
+        plt.title("Evolution of the solution to the heat equation")
+        plt.show()
+
+
         plt.show()
