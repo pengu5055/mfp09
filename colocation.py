@@ -91,7 +91,8 @@ class ColocationSolver:
             c[i] = A_inv*B*self.dt @ c[i-1] + c[i-1]
 
 
-        self.solution = c
+        # 3. Solve: A * c = f
+        self.solution = A @ c
 
         # DEBUG: plots to visualize happening
         # t, c, k = splrep(self.x, self.solution[0], s=0, k=3)
@@ -131,6 +132,7 @@ class ColocationSolver:
                        saveVideo: bool = False, 
                        videoName: str = "animation.mp4", 
                        fps: int = 20,
+                       plotInitial: bool = False,
                     ):
         """
         Plot the solution as an animation. Will try to get computed solution
@@ -147,6 +149,7 @@ class ColocationSolver:
             saveVideo: Whether or not to save the animation as a video.
             videoName: The name of the video to save.
             fps: The frames per second of the video.
+            plotInitial: Whether or not to plot the initial condition.
         
         Return:
             None
@@ -172,6 +175,9 @@ class ColocationSolver:
 
         fig, ax = plt.subplots()
         line, = ax.plot(x, solution[0], label="t = 0 s", c=color)
+        if plotInitial:
+            plt.plot(self.x, self.initial_condition(self.x), label="Initial condition", c="red", alpha=0.2)
+
         ax.set_xlabel("x")
         ax.set_ylabel("T")
         # ax.set_ylim(-1.5, 1.5)

@@ -26,6 +26,7 @@ solver = ColocationSolver(initial_condition, x_range, N, t, D)
 
 # Solve the PDE
 T, t = solver.solve_Properly()
-solver.plot_Animation(fps=60, method="proper", color="purple")
+solver.plot_Animation(fps=60, method="proper",
+                      color="purple", plotInitial=True)
 
 
