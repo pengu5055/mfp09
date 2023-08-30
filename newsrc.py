@@ -8,7 +8,7 @@ methods for solving the heat equation and plotting the solution.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
-from matplotlib import font_manager as fm
+from matplotlib.patches import RegularPolygon
 import seaborn as sns
 from scipy import fftpack
 from scipy.integrate import solve_ivp
@@ -302,13 +302,59 @@ class SpectralSolver:
         plt.ylabel("t [s]")
         plt.title("Evolution of the solution to the heat equation")
         plt.show()
-
-    def plot_Hexbin(self, method: str = "analytical"):
+       
+    def plot_Hexgrid(self, method: str = "analytical", size=(100, 100)):
         """
         Experimental function to plot the solution as a hexbin plot
         instead of a heatmap.
         """
-        pass
+        fig, ax = plt.subplots()
+        if method == "analytical":
+            data = np.copy(self.solution_a)
+            data = np.flip(data, axis=0)
+        elif method == "numerical":
+            data = np.copy(self.solution)
+            data = np.flip(data, axis=0)
+        else:
+            raise ValueError("Method must be either 'analytical' or 'numerical'!") 
 
+        n_bins_x = size[0]
+        n_bins_y = size[1]
+        bin_size_x = (data.shape[0] - 1)/n_bins_x
+        bin_size_y = (data.shape[1] - 1)/n_bins_y
 
+        grid = np.zeros((n_bins_x, n_bins_y))
+        norm = plt.Normalize(vmin=np.min(data), vmax=np.max(data))
+        for i in range(n_bins_x):
+            for j in range(n_bins_y):
+                center_x = (i + 0.5) * bin_size_x
+                center_y = (j + 0.5) * bin_size_y
 
+                # Create a hexagon
+                hexagon = RegularPolygon((center_x, center_y), numVertices=6, radius=bin_size_x / 2, facecolor='None', edgecolor='k')
+                start_x = i*int(bin_size_x)
+                end_x = (i+1)*int(bin_size_x)
+                start_y = j*int(bin_size_y)
+                end_y = (j+1)*int(bin_size_y)
+
+                bin_value = np.mean(data[start_x:end_x, start_y:end_y])
+
+                hexagon.set_facecolor(cmr.flamingo(bin_value), norm=norm)
+
+                grid[i, j] = bin_value
+
+                # Add the hexagon to the plot
+                ax.add_patch(hexagon)
+
+        x_centers = np.arange(0.5 * bin_size_x, data.shape[1], bin_size_x)
+        y_centers = np.arange(0.5 * bin_size_y, data.shape[0], bin_size_y)
+
+        x_vec = x_centers.repeat(n_bins_y)
+        y_vec = np.tile(y_centers, n_bins_x)
+
+        ax.set_aspect('equal')
+
+        plt.xlabel("x")
+        plt.ylabel("t [s]")
+        plt.title("Evolution of the solution to the heat equation")
+        plt.show()

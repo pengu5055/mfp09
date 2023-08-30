@@ -24,7 +24,6 @@ solver = SpectralSolver(gaussian_Initial, x_range, N, t_points, D)
 T, t1 = solver.solve_Numerically()
 T_a, t2 = solver.solve_Analytically()
 
-solver.plot_Animation(fps=60, method="analytical", color="green")
-solver.plot_Heatmap()
+# solver.plot_Animation(fps=60, method="analytical", color="green")
+solver.plot_Hexbin()
 
-# solver.plot_Animation_both(fps=60)
