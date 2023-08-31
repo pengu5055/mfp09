@@ -18,14 +18,14 @@ def gaussian_odd_expansion(x, a=5, sigma=1):
 def fm_modulated_sine_superposition_Initial(x):
          return np.sin(2 * np.pi * x * np.sin(2 * np.pi * x * 0.1)*gaussian_Initial(x) + np.sin(2 * np.pi * x * 0.03))
 # Set x range and mesh size
-x_range = (-10.5, 10.5)
-N = 100#10000
+x_range = (-0.5, 10.5)
+N = 10000
 # Provide time points for the solver
 t_points = np.linspace(0, 5, N)
 # Set diffusion constant
 D = 1e-3
 
-solver = SpectralSolver(fm_modulated_sine_superposition_Initial, x_range, N, t_points, D)
+solver = SpectralSolver(gaussian_Initial, x_range, N, t_points, D)
 solver.solve_Analytically()
 solver.plot_Lines(method="analytical")
 solver.plot_Heatmap(method="analytical")

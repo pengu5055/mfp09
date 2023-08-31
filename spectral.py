@@ -312,7 +312,8 @@ class SpectralSolver:
         else:
             raise ValueError("Method must be either 'analytical' or 'numerical'!")
         norm = mpl.colors.Normalize(vmin=np.min(data), vmax=np.max(data))
-        plt.imshow(data, cmap=cmr.jungle, aspect="auto", norm=norm,# vmin=np.min(data), vmax=np.max(data),
+        # norm = mpl.colors.Normalize(vmin=0, vmax=1)   
+        plt.imshow(data, cmap=cmr.flamingo, aspect="auto", norm=norm,# vmin=np.min(data), vmax=np.max(data),
                    extent=[self.x_range[0], self.x_range[1], self.t_points[0], self.t_points[-1]])
 
         x_ticks = np.linspace(self.x_range[0],self.x_range[1], 10)
@@ -324,7 +325,7 @@ class SpectralSolver:
         plt.ylabel(r"$t\>[arb. units]$")
         plt.suptitle("Heatmap of the solution solved by Analytical Spectral method", color="#dedede")
         
-        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.jungle)
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
         cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$T\>[arb. units]$",
                       orientation="vertical")
         cb.set_label(r"$T\>[arb. units]$", color="#dedede")
@@ -489,11 +490,11 @@ class SpectralSolver:
         x = self.x
         norm = plt.Normalize(vmin=-np.min(self.t_points), vmax=-np.max(self.t_points))
         # norm = mpl.colors.LogNorm(vmin=0.01, vmax=12)
-        cm = cmr.jungle(np.linspace(0, 1, len(self.t_points)))
+        cm = cmr.flamingo(np.linspace(0, 1, len(self.t_points)))
         for i, sol in enumerate(data):
             ax.plot(x, sol, c=cm[i], alpha=0.8)
 
-        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.jungle)
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
 
         ax.set_xlabel(r"$x\>[arb. units]$")
         ax.set_ylabel(r"$T\>[arb. units]$")
@@ -501,7 +502,7 @@ class SpectralSolver:
         ax.autoscale()
         # Hardcoded limits for now. Just clear a little of the buffer due to edge divergence.
         ax.set_xlim(0, 10)
-        ax.set_ylim(-1.25, 1.25)
+        ax.set_ylim(-0.25, 1.25)
         # ax.set_ylim(np.min(self.solution), np.max(self.solution))
 
         plt.suptitle("Evolution of the solution solved by Analytical Spectral method", color="#dedede")
