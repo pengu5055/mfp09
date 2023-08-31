@@ -302,7 +302,7 @@ class SpectralSolver:
         Plot the solution as a heatmap.
         """
         plt.rcParams.update({'font.family': 'Verdana'})
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(facecolor="#4d4c4c")
         if method == "analytical":
             data = np.copy(self.solution_a)
             data = np.flip(data, axis=0)
@@ -320,9 +320,27 @@ class SpectralSolver:
         y_ticks = np.linspace(self.t_points[0], self.t_points[-1], 10)
         plt.yticks(y_ticks)
 
-        plt.xlabel("x")
-        plt.ylabel("t [s]")
-        plt.title("Evolution of the solution to the heat equation")
+        plt.xlabel(r"$x\>[arb. units]$")
+        plt.ylabel(r"$t\>[arb. units]$")
+        plt.title("Evolution of the solution to the heat equation", color="#dedede")
+        norm = mpl.colors.Normalize(vmin=np.min(data), vmax=np.max(data))
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
+        cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$T\>[arb. units]$",
+                      orientation="vertical")
+        cb.set_label(r"$t\>[arb. units]$", color="#dedede")
+        cb.ax.xaxis.set_tick_params(color="#dedede")
+        cb.ax.yaxis.set_tick_params(color="#dedede")
+        cb.ax.tick_params(axis="x", colors="#dedede")
+        cb.ax.tick_params(axis="y", colors="#dedede")
+        ax.spines['bottom'].set_color("#dedede")
+        ax.spines['top'].set_color("#dedede")
+        ax.spines['right'].set_color("#dedede")
+        ax.spines['left'].set_color("#dedede")
+        ax.xaxis.label.set_color("#dedede")
+        ax.yaxis.label.set_color("#dedede")
+        ax.tick_params(axis="x", colors="#dedede")
+        ax.tick_params(axis="y", colors="#dedede")
+
         plt.show()
        
     def plot_Hexgrid(self, method: str = "analytical", size=(100, 100)):
@@ -504,4 +522,5 @@ class SpectralSolver:
         ax.yaxis.label.set_color("#dedede")
         ax.tick_params(axis="x", colors="#dedede")
         ax.tick_params(axis="y", colors="#dedede")
+        ax.axhline(0, linestyle="--", color="#dedede")
         plt.show()

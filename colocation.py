@@ -234,3 +234,107 @@ class ColocationSolver:
             ani.save(videoName, writer=writervideo)
 
         plt.show()
+
+    def plot_Lines(self, method: str = "proper"):
+        """
+        Plot the solution as lines.
+        """
+        plt.rcParams.update({'font.family': 'Verdana'})
+        fig, ax = plt.subplots(facecolor="#4d4c4c")
+        # for solution in self.solution:
+        #     segments.append(np.asarray([np.column_stack((x, y)) for x, y in zip(self.x, solution)]).ravel())
+
+        if method == "proper":
+            data = np.copy(self.solution_a)
+            data = np.flip(data, axis=0)
+        elif method == "manual":
+            data = np.copy(self.solution_m)
+            data = np.flip(data, axis=0)
+        else:
+            raise ValueError("Method must be either 'analytical' or 'numerical'!") 
+
+        x = self.x
+        norm = plt.Normalize(vmin=-np.min(self.t_points), vmax=-np.max(self.t_points))
+        cm = cmr.flamingo(np.linspace(0, 1, len(self.t_points)))
+        for i, sol in enumerate(data):
+            ax.plot(x, sol, c=cm[i], alpha=0.8)
+
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
+
+        ax.set_xlabel(r"$x\>[arb. units]$")
+        ax.set_ylabel(r"$T\>[arb. units]$")
+
+        ax.autoscale()
+        # Hardcoded limits for now. Just clear a little of the buffer due to edge divergence.
+        ax.set_xlim(0, 10)
+        ax.set_ylim(-0.25, 1.25)
+        # ax.set_ylim(np.min(self.solution), np.max(self.solution))
+
+        ax.set_title("Evolution of the solution to the heat equation", color="#dedede")
+
+        # Make it dark
+        ax.set_facecolor("#bababa")
+        cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$t\>[arb. units]$",
+                      orientation="vertical")
+        cb.set_label(r"$t\>[arb. units]$", color="#dedede")
+        cb.ax.xaxis.set_tick_params(color="#dedede")
+        cb.ax.yaxis.set_tick_params(color="#dedede")
+        cb.ax.tick_params(axis="x", colors="#dedede")
+        cb.ax.tick_params(axis="y", colors="#dedede")
+        plt.grid(c="#d1d1d1", alpha=0.5)
+        ax.spines['bottom'].set_color("#dedede")
+        ax.spines['top'].set_color("#dedede")
+        ax.spines['right'].set_color("#dedede")
+        ax.spines['left'].set_color("#dedede")
+        ax.xaxis.label.set_color("#dedede")
+        ax.yaxis.label.set_color("#dedede")
+        ax.tick_params(axis="x", colors="#dedede")
+        ax.tick_params(axis="y", colors="#dedede")
+        ax.axhline(0, linestyle="--", color="#dedede")
+        plt.show()
+    
+    def plot_Heatmap(self, method: str = "proper"):
+        """
+        Plot the solution as a heatmap.
+        """
+        plt.rcParams.update({'font.family': 'Verdana'})
+        fig, ax = plt.subplots(facecolor="#4d4c4c")
+        if method == "proper":
+            data = np.copy(self.solution)
+            data = np.flip(data, axis=0)
+        elif method == "manual":
+            data = np.copy(self.solution_m)
+            data = np.flip(data, axis=0)
+        else:
+            raise ValueError("Method must be either 'analytical' or 'numerical'!")
+
+        plt.imshow(data, cmap=cmr.flamingo, aspect="auto", vmin=np.min(data), vmax=np.max(data),
+                   extent=[self.x_range[0], self.x_range[1], self.t_points[0], self.t_points[-1]])
+
+        x_ticks = np.linspace(self.x_range[0],self.x_range[1], 10)
+        plt.xticks(x_ticks)
+        y_ticks = np.linspace(self.t_points[0], self.t_points[-1], 10)
+        plt.yticks(y_ticks)
+
+        plt.xlabel(r"$x\>[arb. units]$")
+        plt.ylabel(r"$t\>[arb. units]$")
+        plt.title("Evolution of the solution to the heat equation", color="#dedede")
+        norm = mpl.colors.Normalize(vmin=np.min(data), vmax=np.max(data))
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
+        cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$T\>[arb. units]$",
+                      orientation="vertical")
+        cb.set_label(r"$t\>[arb. units]$", color="#dedede")
+        cb.ax.xaxis.set_tick_params(color="#dedede")
+        cb.ax.yaxis.set_tick_params(color="#dedede")
+        cb.ax.tick_params(axis="x", colors="#dedede")
+        cb.ax.tick_params(axis="y", colors="#dedede")
+        ax.spines['bottom'].set_color("#dedede")
+        ax.spines['top'].set_color("#dedede")
+        ax.spines['right'].set_color("#dedede")
+        ax.spines['left'].set_color("#dedede")
+        ax.xaxis.label.set_color("#dedede")
+        ax.yaxis.label.set_color("#dedede")
+        ax.tick_params(axis="x", colors="#dedede")
+        ax.tick_params(axis="y", colors="#dedede")
+
+        plt.show()

@@ -106,11 +106,17 @@ class MPI_Node():
         if not isRoot:
             return gathered_data  # comm.gather returns None on non-root ranks
         elif isRoot:
+            # ERROR IDENTIFIED: The gathered data is not in the correct order. Was broken by the
+            # modifications made for the statistics gatherer.
             output = np.zeros((self.x_backup.shape[0], self.t_points.shape[0]))
             for i in range(self.size):
-                output[i*self.rows_distribution[i]:(i+1)*self.rows_distribution[i], :] = gathered_data[i].T
+               output[i*self.rows_distribution[i]:(i+1)*self.rows_distribution[i], :] = gathered_data[i].T
 
             return output.T
+            # gathered_data = np.asarray(gathered_data).transpose(1, 0, 2).reshape(self.x_backup.shape[0], self.t_points.shape[0]).T
+        
+            # return gathered_data
+
     @_internal_function_timer
     def solve(self, method=None, partialOutput=False):
         """
