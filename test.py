@@ -12,7 +12,8 @@ from colocation import *
 # Test new spectral solver
 def initial_condition(x):
     return np.sin(2*np.pi*x*10)
-
+# def fm_modulated_sine_superposition_Initial(x):
+#         return np.sin(2 * np.pi * x * np.sin(2 * np.pi * x * 0.1) + np.sin(2 * np.pi * x * 0.03))
 # Solve for these points
 t = np.linspace(0, 10, 1000)
 # Solve for this grid range

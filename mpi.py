@@ -231,6 +231,61 @@ class MPI_Node():
             ani.save(videoName, writer=writervideo)
 
         plt.show()
+
+    def plot_Lines(self):
+        """
+        Plot the solution as lines.
+        """
+        # Only rank 0 should plot
+        if self.rank != 0:
+            return None
+        try:
+            x = self.x_backup
+            data = self.solution
+        except NameError:
+            print("Call solution method before trying to plot!")
+
+        plt.rcParams.update({'font.family': 'Verdana'})
+        fig, ax = plt.subplots(facecolor="#4d4c4c")
+
+        x = self.x
+        norm = plt.Normalize(vmin=-np.min(self.t_points), vmax=-np.max(self.t_points))
+        cm = cmr.flamingo(np.linspace(0, 1, len(self.t_points)))
+        for i, sol in enumerate(data):
+            ax.plot(x, sol, c=cm[i], alpha=0.8)
+
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
+
+        ax.set_xlabel(r"$x\>[arb. units]$")
+        ax.set_ylabel(r"$T\>[arb. units]$")
+
+        ax.autoscale()
+        # Hardcoded limits for now. Just clear a little of the buffer due to edge divergence.
+        ax.set_xlim(0, 10)
+        ax.set_ylim(-0.25, 1.25)
+        # ax.set_ylim(np.min(self.solution), np.max(self.solution))
+
+        ax.set_title("Evolution of the solution to the heat equation", color="#dedede")
+
+        # Make it dark
+        ax.set_facecolor("#bababa")
+        cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$t\>[arb. units]$",
+                      orientation="vertical")
+        cb.set_label(r"$t\>[arb. units]$", color="#dedede")
+        cb.ax.xaxis.set_tick_params(color="#dedede")
+        cb.ax.yaxis.set_tick_params(color="#dedede")
+        cb.ax.tick_params(axis="x", colors="#dedede")
+        cb.ax.tick_params(axis="y", colors="#dedede")
+        plt.grid(c="#d1d1d1", alpha=0.5)
+        ax.spines['bottom'].set_color("#dedede")
+        ax.spines['top'].set_color("#dedede")
+        ax.spines['right'].set_color("#dedede")
+        ax.spines['left'].set_color("#dedede")
+        ax.xaxis.label.set_color("#dedede")
+        ax.yaxis.label.set_color("#dedede")
+        ax.tick_params(axis="x", colors="#dedede")
+        ax.tick_params(axis="y", colors="#dedede")
+        plt.show()
         
 
     
