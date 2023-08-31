@@ -12,8 +12,8 @@ def gaussian_Initial(x, a=2, sigma=1):
 def fm_modulated_sine_superposition_Initial(x):
         return np.sin(2 * np.pi * x * np.sin(2 * np.pi * x * 0.1) + np.sin(2 * np.pi * x * 0.03))
 # Set x range and mesh size
-x_range = (0, 10)
-N = 10
+x_range = (-0.5, 11.5)
+N = 100
 # Provide time points for the solver
 t_points = np.linspace(0, 15, N)
 # Set diffusion constant
@@ -25,5 +25,5 @@ T, t1 = solver.solve_Numerically()
 T_a, t2 = solver.solve_Analytically()
 
 # solver.plot_Animation(fps=60, method="analytical", color="green")
-solver.plot_Lines()
+solver.plot_Lines(method="analytical")
 

@@ -7,6 +7,7 @@ methods for solving the heat equation and plotting the solution.
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 from matplotlib.patches import RegularPolygon
 from matplotlib.collections import RegularPolyCollection, LineCollection
@@ -448,37 +449,59 @@ class SpectralSolver:
 
         plt.show()
     
-    def plot_Lines(self):
+    def plot_Lines(self, method: str = "analytical"):
         """
         Plot the solution as lines.
         """
         plt.rcParams.update({'font.family': 'Verdana'})
-        fig, ax = plt.subplots()
-        
+        fig, ax = plt.subplots(facecolor="#4d4c4c")
         # for solution in self.solution:
         #     segments.append(np.asarray([np.column_stack((x, y)) for x, y in zip(self.x, solution)]).ravel())
 
+        if method == "analytical":
+            data = np.copy(self.solution_a)
+            data = np.flip(data, axis=0)
+        elif method == "numerical":
+            data = np.copy(self.solution)
+            data = np.flip(data, axis=0)
+        else:
+            raise ValueError("Method must be either 'analytical' or 'numerical'!") 
+
         x = self.x
-        y = self.solution
+        norm = plt.Normalize(vmin=-np.min(self.t_points), vmax=-np.max(self.t_points))
+        cm = cmr.flamingo(np.linspace(0, 1, len(self.t_points)))
+        for i, sol in enumerate(data):
+            ax.plot(x, sol, c=cm[i], alpha=0.8)
 
-        segments = []
-        for i in range(len(x)):
-            segment = np.column_stack((x, y[:, i]))
-            segments.append(segment)
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
 
-        norm = plt.Normalize(vmin=np.min(self.solution), vmax=np.max(self.solution))
-
-        col = LineCollection(segments, cmap="cmr.flamingo", norm=norm)
-        col.set_array(self.t_points)
-        ax.add_collection(col)
-
-        ax.set_xlabel("x")
-        ax.set_ylabel("T")
+        ax.set_xlabel(r"$x\>[arb. units]$")
+        ax.set_ylabel(r"$T\>[arb. units]$")
 
         ax.autoscale()
-        # ax.set_xlim(self.x_range[0], self.x_range[1])
+        # Hardcoded limits for now. Just clear a little of the buffer due to edge divergence.
+        ax.set_xlim(0, 10)
+        ax.set_ylim(-0.25, 1.25)
         # ax.set_ylim(np.min(self.solution), np.max(self.solution))
 
-        ax.set_title("Evolution of the solution to the heat equation")
-        plt.legend()
+        ax.set_title("Evolution of the solution to the heat equation", color="#dedede")
+
+        # Make it dark
+        ax.set_facecolor("#bababa")
+        cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$t\>[arb. units]$",
+                      orientation="vertical")
+        cb.set_label(r"$t\>[arb. units]$", color="#dedede")
+        cb.ax.xaxis.set_tick_params(color="#dedede")
+        cb.ax.yaxis.set_tick_params(color="#dedede")
+        cb.ax.tick_params(axis="x", colors="#dedede")
+        cb.ax.tick_params(axis="y", colors="#dedede")
+        plt.grid(c="#d1d1d1", alpha=0.5)
+        ax.spines['bottom'].set_color("#dedede")
+        ax.spines['top'].set_color("#dedede")
+        ax.spines['right'].set_color("#dedede")
+        ax.spines['left'].set_color("#dedede")
+        ax.xaxis.label.set_color("#dedede")
+        ax.yaxis.label.set_color("#dedede")
+        ax.tick_params(axis="x", colors="#dedede")
+        ax.tick_params(axis="y", colors="#dedede")
         plt.show()
