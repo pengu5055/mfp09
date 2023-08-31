@@ -24,20 +24,11 @@ class GatherStatistics:
         """
         Initialize the statistics gatherer.
         """
-        # Init MPI
-        self.comm = MPI.COMM_WORLD
-        self.rank = self.comm.Get_rank()
-        self.size = self.comm.Get_size()
-        self.status = MPI.Status()
-        self.name = MPI.Get_processor_name()
-        self.hostname = socket.gethostname()
-        self.fname = "temp_stat.py"
-        self.step = step
-        print(f"Hi! This is rank {self.rank} on {self.hostname}. Ready to go to work...")
-
         # Init statistics
         self.rank_range = rank_range
         self.sample_size = sample_size
+        self.fname = "temp_stat.py"
+        self.step = step
 
     def _internal_function_timer(func: Callable):
         def wrapper(*args, **kwargs):
@@ -63,9 +54,22 @@ class GatherStatistics:
         # Iterate over core numbers
         times = []
         for core_count in core_range:
-            cmd = f"mpiexec -n {core_count} python -m mpi4py {self.fname}"
-            stdout, stderr = subprocess.run(cmd, shell=True)
-            times.append(float(stdout))
+            intermediary = []
+            print("-"*50)
+            for _ in range(self.sample_size):
+                cmd = f"mpiexec -n {core_count} python -m mpi4py {self.fname}"
+                cmd_return = subprocess.run(cmd, shell=True, capture_output=True)
+                print(cmd_return.stdout.decode("utf-8"))
+                try:
+                    intermediary.append(float(cmd_return.stdout.decode("utf-8")[-5]))
+                except ValueError:
+                    intermediary.append("NaN")
+            
+            times.append(np.mean(intermediary))
+            intermediary.clear()
+
+        # Remove temporary files
+        self._remove_temp_files()
 
         return core_range, times
 
@@ -82,27 +86,26 @@ class GatherStatistics:
 import numpy as np
 from mpi import MPI_Node
 from colocation import ColocationSolver
-from newsrc import SpectralSolver
+from spectral import SpectralSolver
                     
 def initial_condition(x):
-    return ($initial_condition)
+    return np.sin(2*np.pi*x*10)
 # Solve for these points
-t = np.linspace(0, 1, ($N))
+t = np.linspace(0, 1, 1000)
 # Solve for this grid range
 x_range = (0, 1)
 # Solve for this grid size
-N = ($N)
+N = 1000
 # Solve for this diffusion constant
 D = 1e-5
 # Initialize solver
 solver = ColocationSolver(initial_condition, x_range, N, t, D)
 
 node = MPI_Node(solver)
-print(node.solve())
+print(node.solve()[1])
 """)
 
-        code = template.substitute(initial_condition=self.solver.initial_condition,
-                                    N=self.solver.N)
+        code = template.substitute()
 
         with open(fname, "w") as f:
             f.write(code)

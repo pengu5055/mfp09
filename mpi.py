@@ -52,7 +52,7 @@ class MPI_Node():
             result = func(*args, **kwargs)
             end = time.time()
             print(f"Function {func.__name__} took {end - start} seconds to run.")
-            return result, start - end
+            return result, end - start
         return wrapper
     
     def _distribute_data(self, data):
