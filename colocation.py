@@ -7,6 +7,7 @@ We're going to need to solve matrix equations, so we'll use numpy.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
+import matplotlib as mpl
 from scipy import fftpack
 from typing import Tuple, Callable, List, Iterable
 from scipy.interpolate import BSpline, splrep
@@ -245,7 +246,7 @@ class ColocationSolver:
         #     segments.append(np.asarray([np.column_stack((x, y)) for x, y in zip(self.x, solution)]).ravel())
 
         if method == "proper":
-            data = np.copy(self.solution_a)
+            data = np.copy(self.solution)
             data = np.flip(data, axis=0)
         elif method == "manual":
             data = np.copy(self.solution_m)
@@ -270,7 +271,7 @@ class ColocationSolver:
         ax.set_ylim(-0.25, 1.25)
         # ax.set_ylim(np.min(self.solution), np.max(self.solution))
 
-        ax.set_title("Evolution of the solution to the heat equation", color="#dedede")
+        plt.suptitle("Evolution of the solution solved by Library Colocation method", color="#dedede")
 
         # Make it dark
         ax.set_facecolor("#bababa")
@@ -318,7 +319,7 @@ class ColocationSolver:
 
         plt.xlabel(r"$x\>[arb. units]$")
         plt.ylabel(r"$t\>[arb. units]$")
-        plt.title("Evolution of the solution to the heat equation", color="#dedede")
+        plt.suptitle("Heatmap of the solution solved by Library Colocation method", color="#dedede")
         norm = mpl.colors.Normalize(vmin=np.min(data), vmax=np.max(data))
         scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
         cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$T\>[arb. units]$",
