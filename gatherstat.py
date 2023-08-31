@@ -61,7 +61,9 @@ class GatherStatistics:
                 cmd_return = subprocess.run(cmd, shell=True, capture_output=True)
                 print(cmd_return.stdout.decode("utf-8"))
                 try:
-                    intermediary.append(float(cmd_return.stdout.decode("utf-8")[-5]))
+                    # Get all numbers after @ until %. Ultra hacky.
+                    result = cmd_return.stdout.decode().split("@")[1].split("%")[0]
+                    intermediary.append(float(result))
                 except ValueError:
                     intermediary.append("NaN")
             
@@ -102,7 +104,7 @@ D = 1e-5
 solver = ColocationSolver(initial_condition, x_range, N, t, D)
 
 node = MPI_Node(solver)
-print(node.solve()[1])
+print(f"@{node.solve()[1]}%")
 """)
 
         code = template.substitute()

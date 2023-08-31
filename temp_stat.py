@@ -19,4 +19,4 @@ D = 1e-5
 solver = ColocationSolver(initial_condition, x_range, N, t, D)
 
 node = MPI_Node(solver)
-print(node.solve()[1])
+print(f"@{node.solve()[1]}%")

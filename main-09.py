@@ -13,7 +13,7 @@ def fm_modulated_sine_superposition_Initial(x):
         return np.sin(2 * np.pi * x * np.sin(2 * np.pi * x * 0.1) + np.sin(2 * np.pi * x * 0.03))
 # Set x range and mesh size
 x_range = (0, 10)
-N = 1000
+N = 10
 # Provide time points for the solver
 t_points = np.linspace(0, 15, N)
 # Set diffusion constant

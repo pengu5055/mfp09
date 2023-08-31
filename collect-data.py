@@ -2,7 +2,7 @@ from gatherstat import GatherStatistics
 import matplotlib.pyplot as plt
 import numpy as np
 
-gatherer = GatherStatistics(rank_range=(1, 12), sample_size=5, step=1)
+gatherer = GatherStatistics(rank_range=(1, 3), sample_size=3, step=1)
 
 cr, t = gatherer.run()
 

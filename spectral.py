@@ -455,17 +455,30 @@ class SpectralSolver:
         plt.rcParams.update({'font.family': 'Verdana'})
         fig, ax = plt.subplots()
         
+        # for solution in self.solution:
+        #     segments.append(np.asarray([np.column_stack((x, y)) for x, y in zip(self.x, solution)]).ravel())
+
+        x = self.x
+        y = self.solution
+
         segments = []
-        for solution in self.solution:
-            segments.append(np.column_stack((self.x, solution)))
+        for i in range(len(x)):
+            segment = np.column_stack((x, y[:, i]))
+            segments.append(segment)
 
-        col = LineCollection(segments, cmap="plasma", norm=matplotlib.colors.LogNorm(vmin=p_start, vmax=p_end))
-        col.set_array(k_value)
-        ax.add_collection(col, autolim=True)
+        norm = plt.Normalize(vmin=np.min(self.solution), vmax=np.max(self.solution))
 
+        col = LineCollection(segments, cmap="cmr.flamingo", norm=norm)
+        col.set_array(self.t_points)
+        ax.add_collection(col)
 
         ax.set_xlabel("x")
         ax.set_ylabel("T")
+
+        ax.autoscale()
+        # ax.set_xlim(self.x_range[0], self.x_range[1])
+        # ax.set_ylim(np.min(self.solution), np.max(self.solution))
+
         ax.set_title("Evolution of the solution to the heat equation")
         plt.legend()
         plt.show()
