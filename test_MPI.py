@@ -4,7 +4,7 @@ Test the MPI_Node class.
 from mpi import MPI_Node
 import numpy as np
 from colocation import ColocationSolver
-from newsrc import SpectralSolver
+from spectral import SpectralSolver
 
 # Test new parallel wrapper for solver
 def initial_condition(x):

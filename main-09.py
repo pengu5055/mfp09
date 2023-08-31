@@ -4,7 +4,7 @@ Functions should be called from src.py and executed here.
 Results are to be plotted with matplotlib.
 """
 import numpy as np
-from newsrc import *
+from spectral import *
 
 # Define initial condition
 def gaussian_Initial(x, a=2, sigma=1):

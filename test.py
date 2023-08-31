@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from newsrc import *
+from spectral import *
 from colocation import *
 
 

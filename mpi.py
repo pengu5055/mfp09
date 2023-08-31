@@ -8,7 +8,7 @@ from mpi4py import MPI
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
-from newsrc import *
+from spectral import *
 from colocation import *
 from typing import Tuple, Callable, List, Iterable
 import socket

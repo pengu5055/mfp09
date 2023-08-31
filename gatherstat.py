@@ -7,7 +7,7 @@ from mpi4py import MPI
 from mpi import MPI_Node
 import numpy as np
 from colocation import ColocationSolver
-from newsrc import SpectralSolver
+from spectral import SpectralSolver
 import matplotlib.pyplot as plt
 import socket
 from typing import Tuple, Callable, List, Iterable
