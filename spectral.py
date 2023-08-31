@@ -312,6 +312,7 @@ class SpectralSolver:
         else:
             raise ValueError("Method must be either 'analytical' or 'numerical'!")
 
+        # TODO REMOVE TEMP MIN MAX
         plt.imshow(data, cmap=cmr.flamingo, aspect="auto", vmin=np.min(data), vmax=np.max(data),
                    extent=[self.x_range[0], self.x_range[1], self.t_points[0], self.t_points[-1]])
 
@@ -322,7 +323,7 @@ class SpectralSolver:
 
         plt.xlabel(r"$x\>[arb. units]$")
         plt.ylabel(r"$t\>[arb. units]$")
-        plt.title("Evolution of the solution to the heat equation", color="#dedede")
+        plt.suptitle("Heatmap of the solution solved by Numerical Spectral method", color="#dedede")
         norm = mpl.colors.Normalize(vmin=np.min(data), vmax=np.max(data))
         scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
         cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$T\>[arb. units]$",
@@ -340,7 +341,7 @@ class SpectralSolver:
         ax.yaxis.label.set_color("#dedede")
         ax.tick_params(axis="x", colors="#dedede")
         ax.tick_params(axis="y", colors="#dedede")
-
+        plt.subplots_adjust(right=1)
         plt.show()
        
     def plot_Hexgrid(self, method: str = "analytical", size=(100, 100)):
@@ -502,7 +503,7 @@ class SpectralSolver:
         ax.set_ylim(-0.25, 1.25)
         # ax.set_ylim(np.min(self.solution), np.max(self.solution))
 
-        ax.set_title("Evolution of the solution to the heat equation", color="#dedede")
+        plt.suptitle("Evolution of the solution solved by Numerical Spectral method", color="#dedede")
 
         # Make it dark
         ax.set_facecolor("#bababa")
@@ -523,4 +524,5 @@ class SpectralSolver:
         ax.tick_params(axis="x", colors="#dedede")
         ax.tick_params(axis="y", colors="#dedede")
         ax.axhline(0, linestyle="--", color="#dedede")
+        plt.subplots_adjust(right=1)
         plt.show()
