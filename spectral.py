@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 from matplotlib.patches import RegularPolygon
-from matplotlib.collections import RegularPolyCollection
+from matplotlib.collections import RegularPolyCollection, LineCollection
 import seaborn as sns
 from scipy import fftpack
 from scipy.integrate import solve_ivp
@@ -446,4 +446,26 @@ class SpectralSolver:
         plt.show()
 
 
+        plt.show()
+    
+    def plot_Lines(self):
+        """
+        Plot the solution as lines.
+        """
+        plt.rcParams.update({'font.family': 'Verdana'})
+        fig, ax = plt.subplots()
+        
+        segments = []
+        for solution in self.solution:
+            segments.append(np.column_stack((self.x, solution)))
+
+        col = LineCollection(segments, cmap="plasma", norm=matplotlib.colors.LogNorm(vmin=p_start, vmax=p_end))
+        col.set_array(k_value)
+        ax.add_collection(col, autolim=True)
+
+
+        ax.set_xlabel("x")
+        ax.set_ylabel("T")
+        ax.set_title("Evolution of the solution to the heat equation")
+        plt.legend()
         plt.show()
