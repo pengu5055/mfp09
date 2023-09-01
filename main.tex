@@ -222,6 +222,48 @@ PDE z nehomogenim Dirichletovim robnim pogojem $T(0, t) = T(a, t) = 0$ in istim 
 in primerjamo obe metodi.\\
 
 \section{Opis reševanja}
+Po (pre)dolgem premoru sem se lotil reševanja naloge, spet na tradicionalen način, torej z uporabo 
+Pythona in knjižnic \texttt{numpy} in \texttt{scipy}. Za risanje grafov sem uporabil knjižnico
+\texttt{matplotlib}. Zdaj imam tudi nekaj trikov v rokavu, ki sem jih uspel na hitro preizkusiti.\\
+
+Po tem ko sem se lotil reševanja naloge sem ugotovil, da je bil moj prvoten pristop (opisan v 
+datoteki \texttt{src.py}) popolnoma nepraktičen in napačen. Lotil sem se reševanja na novo in sicer
+z bolj sistematičnim pristopom. Za obe metodi sem napisal razred, ki vsebuje vse potrebne funkcije
+za reševanje. Poglejmo si to podrobneje.\\
+
+\subsection{SpectralSolver}
+Razred \texttt{SpectralSolver} je namenjen reševanju PDE po Fourierovi metodi. V konstruktorju
+razreda se inicializirajo vsi potrebni parametri, ki jih potrebujemo za reševanje. To so 
+difuzijska konstanta $D$, debelina plasti $a$, število točk v prostoru $N$, začetni pogoj $f(x)$ in
+niz časov za katere računamo rešitev. Od tu naprej uporabnik pokliče eno od metod za reševanje
+PDE. Torej ali \texttt{solve\_Analytically()} ali \texttt{solve\_Numerically()}. Prva metoda uporablja
+analitično rešitev, ki je podana z enačbo (\ref{eq:4}). Druga metoda pa uporablja
+\texttt{scipy.integrate.odeint()} za reševanje sistema enačb (\ref{eq:2}).\\
+
+Po opravljenem reševanju vsebuje razred tudi vse metode za izris raznih grafov. Zna risati te 
+zvezne line plot-e, ki jih uporabljam za risanje temperaturnega profila v odvisnosti od časa. Zna
+risati "Heatmap" grafe in tudi animacije, ki jih žal ni smiselno dati v statično poročilo. Obstajajo
+tudi eksperimentalne metode za neke hexbin grafe in 3D grafe, ki jih na koncu nisem uporabil, ampak
+obstajajo pa, če bi jih kdo rad uporabil.\\
+
+\subsection{ColocationSolver}
+Podobno, obstaja razred \texttt{ColocationSolver}, ki je namenjen reševanju PDE po metodi končnih
+elementov. Tudi ta razred vsebuje vse potrebne parametre za reševanje, ki se incializira v 
+konstruktorju. Parametri so enaki kot pri prejšnjem razredu. Razred ima tudi dve metode za
+reševanje PDE. Prva je \texttt{solve\_Properly()}, ki uporablja \texttt{scipy.linalg.solve\_banded()},
+da reši sistem enačb. Druga metoda je \texttt{solve\_Manually()}, ki reši sistem enačb z Thomasovim
+algoritmom. Ta metoda je načeloma precej hitrejša. Razred vsebuje tudi metode za risanje grafov, ki so
+enake kot pri prejšnjem razredu.\\
+
+
+\subsection{MPI_Node}
+Oče mi je dal nasvet, da naj poskusim pri zaključku 1. stopnje faksa biti pragmatičen in se ne ukvarjati
+z nekimi nepotrebnimi stvarmi. No jaz sem pač nekoliko glup in imam zdaj precej časovno stisko, kako
+naj bi uspel vse končati... ampak imam pa paralelizirane metode preko MPI-ja heh.\\
+
+Razred \texttt{MPI\_Node} je namenjen paralelizaciji reševanja PDE. V konstruktorju se inicializira
+
+
 
 \section{Rezultati}
 
