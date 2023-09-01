@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 0 "main.aux" "main.bbl" "main" 1693610659 -1
-  "./sources.bib" 1693580566 585 59db498271dfb5e1811a288748c6fc20 ""
+["bibtex main"] 1693610913 "main.aux" "main.bbl" "main" 1693610917 0
+  "./sources.bib" 1693610861 321 b5437df39ba180ea1af4679f8ac71b2f ""
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/unsrt.bst" 1291868336 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "main.aux" 1693610658 7705 5777b1cc5b17f166982ccb9c8703b804 "pdflatex"
+  "main.aux" 1693610916 7757 26b5d91b3b728dc8cbf947af585728f1 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1693610656 "e:/FormerSSD/Backup/Documents/FMF/3. Letnik (Dodatno Leto)/Mafijski Praktikum cont/DN9/main.tex" "main.pdf" "main" 1693610659 0
+["pdflatex"] 1693610913 "e:/FormerSSD/Backup/Documents/FMF/3. Letnik (Dodatno Leto)/Mafijski Praktikum cont/DN9/main.tex" "main.pdf" "main" 1693610917 0
   "C:/Users/Marko Urbanc/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1691572293 81068 299f700eb05b1217173e62b88b513bd0 ""
   "C:/Users/Marko Urbanc/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1691572099 24122251 e939fd6a89cc5679b97085233755a785 ""
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1233955448 1004 54797486969f23fa377b128694d548df ""
@@ -119,7 +119,7 @@
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388494052 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1656236890 56148 51a9a8571c07b9921892ae11063ae853 ""
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/tex/latex/xstring/xstring.sty" 1673965817 123 a302f2c651a95033260db60e51527ae8 ""
-  "e:/FormerSSD/Backup/Documents/FMF/3. Letnik (Dodatno Leto)/Mafijski Praktikum cont/DN9/main.tex" 1693610655 21367 0dbdfc51989dde4510e005eca8930ade ""
+  "e:/FormerSSD/Backup/Documents/FMF/3. Letnik (Dodatno Leto)/Mafijski Praktikum cont/DN9/main.tex" 1693610906 21408 7e4ed266bd1a11b7f23904a645208dbb ""
   "images/Abs_Error.png" 1693529081 27476 0f2cd94e623ac4bc793a3b5f726ba092 ""
   "images/C_MPI_solved_manual.png" 1693530313 58582 e2c9fbaa5588e0af364bec2fecbb9b4a ""
   "images/C_MPI_solved_manual_Heatmap.png" 1693530521 59337 c323392b2b4217ca42ab4477b1b61e77 ""
@@ -137,11 +137,11 @@
   "images/S_Numeric_P.png" 1693525078 115106 c8c8b2e8a32e05c36b94adfdf0a5a0d8 ""
   "images/S_Numeric_P_Heatmap.png" 1693525352 94154 2e349716c0cbb4b2775910f5442bfdb1 ""
   "logo.png" 1693580566 8303 8f7f5965ff153bbc45aecaef5ccdb0ac ""
-  "main.aux" 1693610658 7705 5777b1cc5b17f166982ccb9c8703b804 "pdflatex"
-  "main.bbl" 1693610121 52 0eba253fc001332e731e8aba3f23127b "bibtex main"
-  "main.out" 1693610658 2706 ac183b13ff29c16f9fc9daa0e129596f "pdflatex"
-  "main.tex" 1693610655 21367 0dbdfc51989dde4510e005eca8930ade ""
-  "main.toc" 1693610658 1571 b859109ecb003821c45cc9a4e15f512d "pdflatex"
+  "main.aux" 1693610916 7757 26b5d91b3b728dc8cbf947af585728f1 "pdflatex"
+  "main.bbl" 1693610913 381 22eaca177c454c6881058a9d117984a2 "bibtex main"
+  "main.out" 1693610916 2706 ac183b13ff29c16f9fc9daa0e129596f "pdflatex"
+  "main.tex" 1693610906 21408 7e4ed266bd1a11b7f23904a645208dbb ""
+  "main.toc" 1693610916 1571 b859109ecb003821c45cc9a4e15f512d "pdflatex"
   (generated)
   "main.aux"
   "main.log"

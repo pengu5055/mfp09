@@ -1,3 +1,11 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{Fehlberg_1968}
+Erwin Fehlberg.
+\newblock {\em Classical fifth-, sixth-, seventh-, and eighth-order Runge-Kutta
+  formulas with Stepsize Control}.
+\newblock National Aeronautics and Space Administration; for sale by the
+  Clearinghouse for Federal Scientific and Technical Information, Springfield,
+  Va, 1968.
 
 \end{thebibliography}
