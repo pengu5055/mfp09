@@ -313,7 +313,7 @@ class SpectralSolver:
             raise ValueError("Method must be either 'analytical' or 'numerical'!")
         norm = mpl.colors.Normalize(vmin=np.min(data), vmax=np.max(data))
         # norm = mpl.colors.Normalize(vmin=0, vmax=1)   
-        plt.imshow(data, cmap=cmr.gothic, aspect="auto", norm=norm,# vmin=np.min(data), vmax=np.max(data),
+        plt.imshow(data, cmap=cmr.redshift, aspect="auto", norm=norm,# vmin=np.min(data), vmax=np.max(data),
                    extent=[self.x_range[0], self.x_range[1], self.t_points[0], self.t_points[-1]])
 
         x_ticks = np.linspace(self.x_range[0],self.x_range[1], 10)
@@ -325,7 +325,7 @@ class SpectralSolver:
         plt.ylabel(r"$t\>[arb. units]$")
         plt.suptitle("Heatmap of the solution solved by Analytical Spectral method", color="#dedede")
         
-        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.gothic)
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.redshift)
         cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$T\>[arb. units]$",
                       orientation="vertical")
         cb.set_label(r"$T\>[arb. units]$", color="#dedede")
@@ -490,11 +490,11 @@ class SpectralSolver:
         x = self.x
         norm = plt.Normalize(vmin=-np.min(self.t_points), vmax=-np.max(self.t_points))
         # norm = mpl.colors.LogNorm(vmin=0.01, vmax=12)
-        cm = cmr.gothic(np.linspace(0, 1, len(self.t_points)))
+        cm = cmr.redshift(np.linspace(0, 1, len(self.t_points)))
         for i, sol in enumerate(data):
             ax.plot(x, sol, c=cm[i], alpha=0.8)
 
-        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.gothic)
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.redshift)
 
         ax.set_xlabel(r"$x\>[arb. units]$")
         ax.set_ylabel(r"$T\>[arb. units]$")
