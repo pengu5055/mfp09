@@ -6,7 +6,8 @@
 \contentsline {section}{\numberline {3}Opis reševanja}{4}{section.3}%
 \contentsline {subsection}{\numberline {3.1}SpectralSolver}{5}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}ColocationSolver}{5}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}MPI_Node}{5}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Rezultati}{5}{section.4}%
-\contentsline {section}{\numberline {5}Komentarji in izboljšave}{5}{section.5}%
-\contentsline {section}{Literatura}{6}{section*.2}%
+\contentsline {subsection}{\numberline {3.3}MPI\_Node}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}GatherStatistics}{5}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Rezultati}{6}{section.4}%
+\contentsline {section}{\numberline {5}Komentarji in izboljšave}{6}{section.5}%
+\contentsline {section}{Literatura}{7}{section*.2}%

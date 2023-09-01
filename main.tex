@@ -237,7 +237,7 @@ razreda se inicializirajo vsi potrebni parametri, ki jih potrebujemo za reševan
 difuzijska konstanta $D$, debelina plasti $a$, število točk v prostoru $N$, začetni pogoj $f(x)$ in
 niz časov za katere računamo rešitev. Od tu naprej uporabnik pokliče eno od metod za reševanje
 PDE. Torej ali \texttt{solve\_Analytically()} ali \texttt{solve\_Numerically()}. Prva metoda uporablja
-analitično rešitev, ki je podana z enačbo (\ref{eq:4}). Druga metoda pa uporablja
+analitično rešitev, ki je podana z enačbo (\ref{eq:4}). Druga metoda pa uporablja \\
 \texttt{scipy.integrate.odeint()} za reševanje sistema enačb (\ref{eq:2}).\\
 
 Po opravljenem reševanju vsebuje razred tudi vse metode za izris raznih grafov. Zna risati te 
@@ -256,14 +256,22 @@ algoritmom. Ta metoda je načeloma precej hitrejša. Razred vsebuje tudi metode 
 enake kot pri prejšnjem razredu.\\
 
 
-\subsection{MPI_Node}
+\subsection{MPI\_Node}
 Oče mi je dal nasvet, da naj poskusim pri zaključku 1. stopnje faksa biti pragmatičen in se ne ukvarjati
 z nekimi nepotrebnimi stvarmi. No jaz sem pač nekoliko glup in imam zdaj precej časovno stisko, kako
-naj bi uspel vse končati... ampak imam pa paralelizirane metode preko MPI-ja heh.\\
+naj bi uspel vse končati... ampak imam pa paralelizirane metode preko MPI-ja heh. (Pri tržni raziskavi
+te naloge se je izkazalo, da so tudi vsi ostali istega mnenja kot moj oče.)\\
 
 Razred \texttt{MPI\_Node} je namenjen paralelizaciji reševanja PDE. V konstruktorju se inicializira
+MPI komunikator, ki ga uporabljamo za komunikacijo med procesi. V osnovi je to samo ovoj (angl. wrapper)
+okoli prejšnjih dveh razredov. Vsebuje metode za delitev intervalov podatkov in za pošiljanje podatkov
+med procesi. Vsebuje tudi metode za risanje grafov, ki so enake kot pri prejšnjih dveh razredih, le da jih
+opravlja lahko samo "root" proces.\\
 
-
+\subsection{GatherStatistics}
+Zato da res pripeljem do konca idejo, da sem nepraktičen, sem napisal še en razred, pravzaprav še en ovoj okoli
+\texttt{MPI\_Node}, ki je namenjen temu da zbira statistiko o času izvajanja. Želel sem dobiti značilne premice
+v log-log skali, ki kažejo na uspešno paralelizacijo, ampak sem to le deloma uspel.\\
 
 \section{Rezultati}
 
