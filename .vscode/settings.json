@@ -4,6 +4,8 @@
         "spectral",
         "MPI",
         "plots",
-        "colocation"
-    ]
+        "colocation",
+        "LaTeX"
+    ],
+    "cSpell.language": "en,sl"
 }
