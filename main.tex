@@ -152,9 +152,61 @@ vstavimo razvoj v PDE in dobimo sistem enačb za koeficiente $\hat{T}_i(t)$
     \sum_{i=-1}^{N+1}{\left(\frac{\partial c_k(t)}{\partial t}\right)B_{i, 3}(x)}\>.
 \end{equation}
 
-Uporabimo lastnosti B-zlepkov in dobimo sistem diferencialnih enačb za koeficiente
+Uporabimo lastnosti B-zlepkov in dobimo sistem diferencialnih enačb za koeficiente $c_k(t)$
 
+\begin{equation}
+    \dot{c}_{j-1}(t) + 4\dot{c}_{j}(t) + \dot{c}_{j+1}(t) = \frac{6D}{h^2}(c_{j-1}(t) - 2c_j(t) + c_{j+1}(t))\>,
+\end{equation}
 
+kjer je $h$ razdalja med točkami, ki smo jih izbrali za kolokacijski pogoj. Iz robnega pogoja pri $x=0$
+ugotovimo, da je $c_{-1} = -4c_0-c_1$. Podobno iz robnega pogoja pri $x=a$ sledi $c_0 = C_N = 0$ in $c_{-1} = -c_1$
+ter $c_{N-1} = -c_{N+1}$. Reševanje smo torej prevedli na reševanje matričnega sistema
+
+\begin{equation}
+    \mathbf{A} \frac{\ddd \vec{c}}{\ddd t} = \mathbf{B}\vec{c}\>,
+\end{equation}
+
+kjer je $\mathbf{A}$ tridiagonalna matrika z $4$ na diagonali in $1$ na pod in nad diagonalo
+
+\begin{equation}
+    \mathbf{A}=\begin{bmatrix}
+        4 & 1 & 0 & \cdots & 0 & 0 & 0\\
+        1 & 4 & 1 & \cdots & 0 & 0 & 0\\
+        0 & 1 & 4 & \cdots & 0 & 0 & 0\\
+        \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots\\
+        0 & 0 & 0 & \cdots & 4 & 1 & 0\\
+        0 & 0 & 0 & \cdots & 1 & 4 & 1\\
+        0 & 0 & 0 & \cdots & 0 & 1 & 4\\
+    \end{bmatrix}\>,
+\end{equation}
+
+$\mathbf{B}$ tridiagonalna matrika z $-2$ na diagonali in $1$ na pod in nad diagonalo pomnožena z $6D/h^2$
+
+\begin{equation}
+    \mathbf{B}=\frac{6D}{h^2}\begin{bmatrix}
+        -2 & 1 & 0 & \cdots & 0 & 0 & 0\\
+        1 & -2 & 1 & \cdots & 0 & 0 & 0\\
+        0 & 1 & -2 & \cdots & 0 & 0 & 0\\
+        \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots\\
+        0 & 0 & 0 & \cdots & -2 & 1 & 0\\
+        0 & 0 & 0 & \cdots & 1 & -2 & 1\\
+        0 & 0 & 0 & \cdots & 0 & 1 & -2\\
+    \end{bmatrix}\>,
+\end{equation}
+
+in $\vec{c}$ vektor koeficientov $c_k(t)$. Začetni pogoj za PDE je $T(x, 0) = f(x)$, torej je začetni približek
+za kolokacijsko aproksimacijo
+
+\begin{equation}
+    \mathbf{A}\vec{c} = \vec{f}\>,
+\end{equation}
+
+kjer je $\vec{f}$ vektor $f(x_i)$. To zdaj rešujemo z neko eksplitično metodo. V našem primeru bomo uporabili
+\textbf{Implicitno Eulerjevo metodo} zaradi njene stabilnosti. To pomeni, da za časovni korak $k$ velja
+
+\begin{equation}
+    \mathbf{A}\frac{\vec{c}_{k+1}-\vec{c}_k}{\Delta t} = \mathbf{B}\vec{c}_{k+1}\>.
+\end{equation}
 
 \section{Naloga}
 

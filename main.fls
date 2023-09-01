@@ -224,6 +224,8 @@ INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cm
 INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\cmextra\cmex7.tfm
 INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\cmextra\cmex7.tfm
 OUTPUT main.toc
+INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx7.tfm
+INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbx5.tfm
 INPUT .\main.bbl
 INPUT .\main.bbl
 INPUT main.bbl
