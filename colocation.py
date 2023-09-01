@@ -256,11 +256,11 @@ class ColocationSolver:
 
         x = self.x
         norm = plt.Normalize(vmin=-np.min(self.t_points), vmax=-np.max(self.t_points))
-        cm = cmr.flamingo(np.linspace(0, 1, len(self.t_points)))
+        cm = cmr.gothic(np.linspace(0, 1, len(self.t_points)))
         for i, sol in enumerate(data):
             ax.plot(x, sol, c=cm[i], alpha=0.8)
 
-        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.gothic)
 
         ax.set_xlabel(r"$x\>[arb. units]$")
         ax.set_ylabel(r"$T\>[arb. units]$")
@@ -271,7 +271,7 @@ class ColocationSolver:
         ax.set_ylim(-0.25, 1.25)
         # ax.set_ylim(np.min(self.solution), np.max(self.solution))
 
-        plt.suptitle("Evolution of the solution solved by Library Colocation method", color="#dedede")
+        plt.suptitle("Evolution of the solution solved by DIY Colocation method", color="#dedede")
 
         # Make it dark
         ax.set_facecolor("#bababa")
@@ -280,6 +280,8 @@ class ColocationSolver:
         cb.set_label(r"$t\>[arb. units]$", color="#dedede")
         cb.ax.xaxis.set_tick_params(color="#dedede")
         cb.ax.yaxis.set_tick_params(color="#dedede")
+        ticks = np.round(-1*cb.ax.get_yticks(), 2)  # *-1 to get the correct values otherwise they are inverted
+        cb.ax.set_yticklabels(ticks)
         cb.ax.tick_params(axis="x", colors="#dedede")
         cb.ax.tick_params(axis="y", colors="#dedede")
         plt.grid(c="#d1d1d1", alpha=0.5)
@@ -309,7 +311,7 @@ class ColocationSolver:
         else:
             raise ValueError("Method must be either 'analytical' or 'numerical'!")
 
-        plt.imshow(data, cmap=cmr.flamingo, aspect="auto", vmin=np.min(data), vmax=np.max(data),
+        plt.imshow(data, cmap=cmr.gothic, aspect="auto", vmin=np.min(data), vmax=np.max(data),
                    extent=[self.x_range[0], self.x_range[1], self.t_points[0], self.t_points[-1]])
 
         x_ticks = np.linspace(self.x_range[0],self.x_range[1], 10)
@@ -319,12 +321,12 @@ class ColocationSolver:
 
         plt.xlabel(r"$x\>[arb. units]$")
         plt.ylabel(r"$t\>[arb. units]$")
-        plt.suptitle("Heatmap of the solution solved by Library Colocation method", color="#dedede")
+        plt.suptitle("Heatmap of the solution solved by DIY Colocation method", color="#dedede")
         norm = mpl.colors.Normalize(vmin=np.min(data), vmax=np.max(data))
-        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.gothic)
         cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$T\>[arb. units]$",
                       orientation="vertical")
-        cb.set_label(r"$t\>[arb. units]$", color="#dedede")
+        cb.set_label(r"$T\>[arb. units]$", color="#dedede")
         cb.ax.xaxis.set_tick_params(color="#dedede")
         cb.ax.yaxis.set_tick_params(color="#dedede")
         cb.ax.tick_params(axis="x", colors="#dedede")
@@ -337,5 +339,7 @@ class ColocationSolver:
         ax.yaxis.label.set_color("#dedede")
         ax.tick_params(axis="x", colors="#dedede")
         ax.tick_params(axis="y", colors="#dedede")
+        plt.subplots_adjust(right=.98)
+        ax.set_xlim(0, 10)
 
         plt.show()
