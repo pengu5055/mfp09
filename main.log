@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.8.9)  2 SEP 2023 00:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.8.9)  2 SEP 2023 01:24
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -535,7 +535,7 @@ Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 Package translations Info: no dictionary file `translations-basic-dictionary-slovenian.trsl' found. on input line 48.
-<logo.png, id=76, 220.67175pt x 141.22992pt>
+<logo.png, id=80, 220.67175pt x 141.22992pt>
 File: logo.png Graphic file (type png)
 <use logo.png>
 Package pdftex.def Info: logo.png  used on input line 51.
@@ -611,35 +611,35 @@ Underfull \hbox (badness 10000) in paragraph at lines 277--279
 
  []
 
-<./images/S_Analytic_P.png, id=155, 462.528pt x 346.896pt>
+<./images/S_Analytic_P.png, id=160, 462.528pt x 346.896pt>
 File: ./images/S_Analytic_P.png Graphic file (type png)
 <use ./images/S_Analytic_P.png>
 Package pdftex.def Info: ./images/S_Analytic_P.png  used on input line 288.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
-<./images/S_Analytic_P_Heatmap.png, id=156, 462.528pt x 346.896pt>
+<./images/S_Analytic_P_Heatmap.png, id=161, 462.528pt x 346.896pt>
 File: ./images/S_Analytic_P_Heatmap.png Graphic file (type png)
 <use ./images/S_Analytic_P_Heatmap.png>
 Package pdftex.def Info: ./images/S_Analytic_P_Heatmap.png  used on input line 295.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
 [6 <./images/S_Analytic_P.png>]
-<./images/S_Numeric_P.png, id=165, 462.528pt x 346.896pt>
+<./images/S_Numeric_P.png, id=170, 462.528pt x 346.896pt>
 File: ./images/S_Numeric_P.png Graphic file (type png)
 <use ./images/S_Numeric_P.png>
 Package pdftex.def Info: ./images/S_Numeric_P.png  used on input line 307.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
  [7 <./images/S_Analytic_P_Heatmap.png>]
-<./images/S_Numeric_P_Heatmap.png, id=173, 462.528pt x 346.896pt>
+<./images/S_Numeric_P_Heatmap.png, id=178, 462.528pt x 346.896pt>
 File: ./images/S_Numeric_P_Heatmap.png Graphic file (type png)
 <use ./images/S_Numeric_P_Heatmap.png>
 Package pdftex.def Info: ./images/S_Numeric_P_Heatmap.png  used on input line 314.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
  [8 <./images/S_Numeric_P.png> <./images/S_Numeric_P_Heatmap.png>]
-<./images/S_Analytic_D.png, id=182, 462.528pt x 346.896pt>
+<./images/S_Analytic_D.png, id=187, 462.528pt x 346.896pt>
 File: ./images/S_Analytic_D.png Graphic file (type png)
 <use ./images/S_Analytic_D.png>
 Package pdftex.def Info: ./images/S_Analytic_D.png  used on input line 336.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
-<./images/S_Analytic_D_Heatmap.png, id=183, 462.528pt x 346.896pt>
+<./images/S_Analytic_D_Heatmap.png, id=188, 462.528pt x 346.896pt>
 File: ./images/S_Analytic_D_Heatmap.png Graphic file (type png)
 <use ./images/S_Analytic_D_Heatmap.png>
 Package pdftex.def Info: ./images/S_Analytic_D_Heatmap.png  used on input line 343.
@@ -649,13 +649,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 348--350
 
  []
 
-<./images/C_Proper.png, id=191, 462.528pt x 346.896pt>
+<./images/C_Proper.png, id=196, 462.528pt x 346.896pt>
 File: ./images/C_Proper.png Graphic file (type png)
 <use ./images/C_Proper.png>
 Package pdftex.def Info: ./images/C_Proper.png  used on input line 357.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
 [10 <./images/S_Analytic_D_Heatmap.png>]
-<./images/C_Proper_Heatmap.png, id=198, 462.528pt x 346.896pt>
+<./images/C_Proper_Heatmap.png, id=203, 462.528pt x 346.896pt>
 File: ./images/C_Proper_Heatmap.png Graphic file (type png)
 <use ./images/C_Proper_Heatmap.png>
 Package pdftex.def Info: ./images/C_Proper_Heatmap.png  used on input line 364.
@@ -666,52 +666,80 @@ Underfull \hbox (badness 10000) in paragraph at lines 370--375
  []
 
 [11 <./images/C_Proper.png> <./images/C_Proper_Heatmap.png>]
-<./images/Comparison.png, id=208, 462.528pt x 346.896pt>
+<./images/Comparison.png, id=213, 462.528pt x 346.896pt>
 File: ./images/Comparison.png Graphic file (type png)
 <use ./images/Comparison.png>
 Package pdftex.def Info: ./images/Comparison.png  used on input line 381.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
-<./images/Abs_Error.png, id=209, 462.528pt x 346.896pt>
+<./images/Abs_Error.png, id=214, 462.528pt x 346.896pt>
 File: ./images/Abs_Error.png Graphic file (type png)
 <use ./images/Abs_Error.png>
 Package pdftex.def Info: ./images/Abs_Error.png  used on input line 388.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
  [12 <./images/Comparison.png>]
-<./images/C_Manual_MPI_scaling.png, id=219, 462.528pt x 346.896pt>
+<./images/C_Manual_MPI_scaling.png, id=224, 462.528pt x 346.896pt>
 File: ./images/C_Manual_MPI_scaling.png Graphic file (type png)
 <use ./images/C_Manual_MPI_scaling.png>
 Package pdftex.def Info: ./images/C_Manual_MPI_scaling.png  used on input line 402.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
  [13 <./images/Abs_Error.png>]
-<./images/C_Proper_MPI_scaling.png, id=228, 462.528pt x 346.896pt>
+<./images/C_Proper_MPI_scaling.png, id=233, 462.528pt x 346.896pt>
 File: ./images/C_Proper_MPI_scaling.png Graphic file (type png)
 <use ./images/C_Proper_MPI_scaling.png>
 Package pdftex.def Info: ./images/C_Proper_MPI_scaling.png  used on input line 409.
 (pdftex.def)             Requested size: 345.0pt x 258.76335pt.
- [14 <./images/C_Manual_MPI_scaling.png> <./images/C_Proper_MPI_scaling.png>] [15] (main.bbl
+
+Underfull \hbox (badness 10000) in paragraph at lines 414--421
+
+ []
+
+[14 <./images/C_Manual_MPI_scaling.png> <./images/C_Proper_MPI_scaling.png>]
+<./images/MPI_alias.png, id=242, 462.528pt x 346.896pt>
+File: ./images/MPI_alias.png Graphic file (type png)
+<use ./images/MPI_alias.png>
+Package pdftex.def Info: ./images/MPI_alias.png  used on input line 436.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+ [15]
+<./images/MPI_Joint.png, id=249, 462.528pt x 346.896pt>
+File: ./images/MPI_Joint.png Graphic file (type png)
+<use ./images/MPI_Joint.png>
+Package pdftex.def Info: ./images/MPI_Joint.png  used on input line 443.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+ [16 <./images/MPI_alias.png> <./images/MPI_Joint.png>]
+<./images/C_MPI_solved_manual.png, id=259, 462.528pt x 346.896pt>
+File: ./images/C_MPI_solved_manual.png Graphic file (type png)
+<use ./images/C_MPI_solved_manual.png>
+Package pdftex.def Info: ./images/C_MPI_solved_manual.png  used on input line 455.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+<./images/C_MPI_solved_manual_Heatmap.png, id=260, 462.528pt x 346.896pt>
+File: ./images/C_MPI_solved_manual_Heatmap.png Graphic file (type png)
+<use ./images/C_MPI_solved_manual_Heatmap.png>
+Package pdftex.def Info: ./images/C_MPI_solved_manual_Heatmap.png  used on input line 462.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+ [17 <./images/C_MPI_solved_manual.png>] [18 <./images/C_MPI_solved_manual_Heatmap.png>] (main.bbl
 
 LaTeX Warning: Empty `thebibliography' environment on input line 3.
 
-) [16] (main.aux)
+) [19] (main.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-06-30>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: B82824A5720DAF2358F83693A4C4E043;2438.
+(rerunfilecheck)             Checksum: AC183B13FF29C16F9FC9DAA0E129596F;2706.
  ) 
 Here is how much of TeX's memory you used:
- 20288 strings out of 475550
- 393480 string characters out of 5759194
+ 20335 strings out of 475550
+ 394758 string characters out of 5759194
  1939238 words of memory out of 5000000
- 41215 multiletter control sequences out of 15000+600000
- 561434 words of font info for 48 fonts, out of 8000000 for 9000
+ 41253 multiletter control sequences out of 15000+600000
+ 561780 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 77i,10n,79p,360b,942s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on main.pdf (17 pages, 795189 bytes).
+ 77i,10n,79p,406b,942s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on main.pdf (20 pages, 1070898 bytes).
 PDF statistics:
- 305 PDF objects out of 1000 (max. 8388607)
- 65 named destinations out of 1000 (max. 500000)
- 214 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 348 PDF objects out of 1000 (max. 8388607)
+ 73 named destinations out of 1000 (max. 500000)
+ 242 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -311,6 +311,35 @@ INPUT .\images\C_Proper_MPI_scaling.png
 INPUT .\images\C_Proper_MPI_scaling.png
 INPUT .\images\C_Proper_MPI_scaling.png
 INPUT .\images\C_Proper_MPI_scaling.png
+INPUT .\images\MPI_alias.png
+INPUT .\images\MPI_alias.png
+INPUT .\images\MPI_alias.png
+INPUT .\images\MPI_alias.png
+INPUT .\images\MPI_alias.png
+INPUT .\images\MPI_alias.png
+INPUT .\images\MPI_alias.png
+INPUT .\images\MPI_Joint.png
+INPUT .\images\MPI_Joint.png
+INPUT .\images\MPI_Joint.png
+INPUT .\images\MPI_Joint.png
+INPUT .\images\MPI_Joint.png
+INPUT .\images\MPI_Joint.png
+INPUT .\images\MPI_Joint.png
+INPUT .\images\C_MPI_solved_manual.png
+INPUT .\images\C_MPI_solved_manual.png
+INPUT .\images\C_MPI_solved_manual.png
+INPUT .\images\C_MPI_solved_manual.png
+INPUT .\images\C_MPI_solved_manual.png
+INPUT .\images\C_MPI_solved_manual.png
+INPUT .\images\C_MPI_solved_manual.png
+INPUT .\images\C_MPI_solved_manual_Heatmap.png
+INPUT .\images\C_MPI_solved_manual_Heatmap.png
+INPUT .\images\C_MPI_solved_manual_Heatmap.png
+INPUT .\images\C_MPI_solved_manual_Heatmap.png
+INPUT .\images\C_MPI_solved_manual_Heatmap.png
+INPUT .\images\C_MPI_solved_manual_Heatmap.png
+INPUT .\images\C_MPI_solved_manual_Heatmap.png
+INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmti10.tfm
 INPUT .\main.bbl
 INPUT .\main.bbl
 INPUT main.bbl
@@ -337,5 +366,7 @@ INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\type1\public\ams
 INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmsy10.pfb
 INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmsy7.pfb
 INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmsy7.pfb
+INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmti10.pfb
+INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmti10.pfb
 INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmtt10.pfb
 INPUT C:\Users\Marko Urbanc\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\cm\cmtt10.pfb

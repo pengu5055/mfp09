@@ -411,9 +411,72 @@ paralelizacijo. Dobil sem slednje slike \ref{fig:11} in \ref{fig:12}.
 \label{fig:12}
 \end{figure}
 
+Za vsak primer sem naredil 10 meritev in izračunal mediano. Kot vidimo, je čas izvajanja v obeh primerih
+podobno odvisen, a žal ne tako, da bi bilo linearno v log skali. Sprva sem mislil, da gre za neke sorte 
+statističen pojav, ampak zdaj sem precej prepričan, da je nekaj še bolj komplicirano, kot sem pričakoval.
+Zanimivo je, da je $\mathrm{rank}=5$ tako časovno potraten. Lahko da je to le značilnost mojega procesorja.
+Ključno pa je to, da se čas izvajanja z večanjem števila procesov načeloma zmanjšuje. Unfortunatelly, mi je
+moj domači cluster Astrum delal težave in seveda si nisem smel dovoliti, da bi se še s tem ubadal. Drugače bi
+imeli na voljo veliko več jeder in bi mogoče lahko dobili lepši graf.\\
+
+\subsubsection{Paralelizacija II (Electric Boogaloo)}
+"Ampak to si paraleliziral samo kolokacijsko metodo Marko? Kaj pa Fouriereva?" pravite in ja to je res, ampak
+zdaj je treba razkrit eno skrivnost. Paralelizacija lahko sama po sebi vključi potujevanje rešitve, kar še 
+sploh velja, če ne uporabljaš kakšnih bolj naprednih trikov. V mojem primeru načeloma samo delim intervale 
+podatkov in jih razporejam. Posledica tega je, da se jasno vidi, da je rešitev sestavljena iz nekih "blokov".
+Sklepam da se ti pojavijo zaradi divergence numeričnih metod na robovih intervala, in je posledično tam vrednost
+rešitve malo večja oz. drugačna. Torej bi se to tudi hitro lahko rešilo, ampak spet beri: ni časa. Zakaj sem 
+paraleliziral samo kolokacijsko metodo? Ker zaradi meni trenutno neznanega razloga paralelizacija Fouriereve
+metode vodi v absolutno absurdne stopničaste rešitve. Verjetno bo precej bolj očitno iz slik. Na sliki \ref{fig:13}
+je prikazan primer, kjer sem paraleliziral Fourierevo metodo. Na sliki \ref{fig:14} pa je prikazana ena rob med 
+blokoma oz. intervaloma.
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/MPI_alias.png}
+        \caption{Fourierova metoda, paralelizirana}
+\label{fig:13}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/MPI_Joint.png}
+        \caption{Fourierova metoda, paralelizirana, ena rob med blokoma}
+\label{fig:14}
+\end{figure}
+
+Zaradi bizarnega razloga dodatno tudi obrne časovno os pri sliki \ref{fig:13}. Ne vem zakaj. Paralelizacija 
+kolokacijske metode pa je v primerjavi s tem precej bolj preprosta. Na sliki \ref{fig:15} je prikazan primer
+paralelizacije kolokacijske metode. Na sliki \ref{fig:16} pa je prikazan še Heatmap. Iz obeh slik je očitno
+razvidno, da je rešitev sestavljena iz posameznih blokov oz. v 1D podintervalov.
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/C_MPI_solved_manual.png}
+        \caption{Kolokacijska metoda, paralelizirana}
+\label{fig:15}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/C_MPI_solved_manual_Heatmap.png}
+        \caption{Še heatmap za kolokacijsko metodo, paralelizirana}
+\label{fig:16}
+\end{figure}
 
 
 \section{Komentarji in izboljšave}
+Res nevem, kako bom opravil še ostale 3 manjkajoče naloge, ampak upam, da mi bo uspelo (brez da 
+bi moral prodati svojo dušo Satanu). Dvomim sicer. Zdi se mi, da sem vseeno ustrezno sproti stvari 
+pokomentiral albeit v bistveno bolj sproščenem tonu, ker sem nekako defeated. Želim si, da bi dejansko
+lahko naredil vse kar sem si zamislil, ampak žal mi to ni uspelo. Res bi poročilu koristilo še kak 
+malo bolj napreden graf.
+
+\begin{quotation}
+    \centering
+    \textit{Today no funny image. I'm too tired for that.}
+\end{quotation}
+
 
 \newpage
 \bibliographystyle{unsrt}
