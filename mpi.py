@@ -256,11 +256,11 @@ class MPI_Node():
 
         x = self.x
         norm = plt.Normalize(vmin=-np.min(self.t_points), vmax=-np.max(self.t_points))
-        cm = cmr.flamingo(np.linspace(0, 1, len(self.t_points)))
+        cm = cmr.ocean(np.linspace(0, 1, len(self.t_points)))
         for i, sol in enumerate(data):
-            ax.plot(x, sol, c=cm[i], alpha=0.8)
+            ax.plot(x, sol, c=cm[-i - 1], alpha=0.8)
 
-        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.flamingo)
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.ocean)
 
         ax.set_xlabel(r"$x\>[arb. units]$")
         ax.set_ylabel(r"$T\>[arb. units]$")
@@ -271,7 +271,7 @@ class MPI_Node():
         ax.set_ylim(-0.25, 1.25)
         # ax.set_ylim(np.min(self.solution), np.max(self.solution))
 
-        ax.set_title("Evolution of the solution to the heat equation", color="#dedede")
+        ax.set_title("MPI enabled Colocation solver $\mathrm{rank}=10$", color="#dedede")
 
         # Make it dark
         ax.set_facecolor("#bababa")
@@ -282,6 +282,8 @@ class MPI_Node():
         cb.ax.yaxis.set_tick_params(color="#dedede")
         cb.ax.tick_params(axis="x", colors="#dedede")
         cb.ax.tick_params(axis="y", colors="#dedede")
+        ticks = np.round(-1*cb.ax.get_yticks(), 2)  # *-1 to get the correct values otherwise they are inverted
+        cb.ax.set_yticklabels(ticks)
         plt.grid(c="#d1d1d1", alpha=0.5)
         ax.spines['bottom'].set_color("#dedede")
         ax.spines['top'].set_color("#dedede")
@@ -292,7 +294,56 @@ class MPI_Node():
         ax.tick_params(axis="x", colors="#dedede")
         ax.tick_params(axis="y", colors="#dedede")
         plt.show()
-        
+    
+    def plot_Heatmap(self, method: str = "proper"):
+        """
+        Plot the solution as a heatmap.
+        """
+        # Only rank 0 should plot
+        if self.rank != 0:
+            return None
+        try:
+            x = self.x_backup
+            data = self.solution
+        except NameError:
+            print("Call solution method before trying to plot!")
+
+        data = np.flip(data, axis=0)
+        plt.rcParams.update({'font.family': 'Verdana'})
+        fig, ax = plt.subplots(facecolor="#4d4c4c")
+
+        plt.imshow(data, cmap=cmr.ocean, aspect="auto", vmin=np.min(data), vmax=np.max(data),
+                   extent=[self.x_range[0], self.x_range[1], self.t_points[0], self.t_points[-1]])
+
+        x_ticks = np.linspace(self.x_range[0],self.x_range[1], 10)
+        plt.xticks(x_ticks)
+        y_ticks = np.linspace(self.t_points[0], self.t_points[-1], 10)
+        plt.yticks(y_ticks)
+
+        plt.xlabel(r"$x\>[arb. units]$")
+        plt.ylabel(r"$t\>[arb. units]$")
+        plt.suptitle("MPI enabled Colocation solver $\mathrm{rank}=10$", color="#dedede")
+        norm = mpl.colors.Normalize(vmin=np.min(data), vmax=np.max(data))
+        scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.ocean)
+        cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$T\>[arb. units]$",
+                      orientation="vertical")
+        cb.set_label(r"$T\>[arb. units]$", color="#dedede")
+        cb.ax.xaxis.set_tick_params(color="#dedede")
+        cb.ax.yaxis.set_tick_params(color="#dedede")
+        cb.ax.tick_params(axis="x", colors="#dedede")
+        cb.ax.tick_params(axis="y", colors="#dedede")
+        ax.spines['bottom'].set_color("#dedede")
+        ax.spines['top'].set_color("#dedede")
+        ax.spines['right'].set_color("#dedede")
+        ax.spines['left'].set_color("#dedede")
+        ax.xaxis.label.set_color("#dedede")
+        ax.yaxis.label.set_color("#dedede")
+        ax.tick_params(axis="x", colors="#dedede")
+        ax.tick_params(axis="y", colors="#dedede")
+        plt.subplots_adjust(right=.98)
+        ax.set_xlim(0, 10)
+
+        plt.show()
 
     
 
