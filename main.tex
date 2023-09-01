@@ -274,7 +274,76 @@ Zato da res pripeljem do konca idejo, da sem nepraktičen, sem napisal še en ra
 v log-log skali, ki kažejo na uspešno paralelizacijo, ampak sem to le deloma uspel.\\
 
 \section{Rezultati}
+Sedaj pa končno rezultati. Ker žal nimam nobenih "grafov 3. reda", kompenziram za pomanjkanje s tem, da
+so grafi divje pisani.\\
 
+\subsection{Fourierova metoda}
+\subsubsection{Periodični robni pogoji}
+Najprej si poglejmo rezultate za periodične robne pogoje. Slike so rešene za mrežo točk $N=10000$ in difuzijsko
+konstanto $D=1e-3$. Začetni pogoj je gaussovka z $\sigma=1$ in $a=5$, na intervalu $[0, 10]$. 
+Začnimo z analitično rešitvijo. Na sliki \ref{fig:1}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/S_Analytic_P.png}
+        \caption{Analitična rešitev}
+    \label{fig:1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/S_Analytic_P_Heatmap.png}
+        \caption{Še heatmap analitične rešitve}
+    \label{fig:2}
+\end{figure}
+
+Kot pričakovano se temperaturna porazdelitev z časom razširi in zgladi. Zaradi periodičnih robnih pogojev
+se temperatura ustali pri neki konstantni vrednosti okoli $0.36$ arbitrarnih enot. Super zdaj vemo proti 
+čemu tekmujemo z numeričnimi metodami. Poglejmo si rezultate za \texttt{solve\_Numerically()} na sliki \ref{fig:3},
+ki bodo seveda skočili na naslednjo stran (ampak je to vseeno boljše kot slike na koncu poročila).
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/S_Numeric_P.png}
+        \caption{Numerična rešitev}
+    \label{fig:3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/S_Numeric_P_Heatmap.png}
+        \caption{Še heatmap numerične rešitve}
+    \label{fig:4}
+\end{figure}
+
+Kot vidimo, se numerična rešitev absolutno NE ujema z analitično in iskreno ne vem zakaj. Poleg vgrajenega
+integratorja iz \texttt{scipy} sem poskusil tudi Runge-Kutta 8 integrator, ki sem ga napisal sam (guess kdo je
+spet zapravil preveč časa na tem), Eulerjevo metodo, RK45 ipd. ampak tudi to ni pomagalo. I tried I suppose.
+
+\subsubsection{Dirichletovi robni pogoji}
+Zdaj pa poglejmo še rezultate za Dirichletove robne pogoje. Začetni pogoj je enak kot prej, ampak to le "v teoriji".
+V resnici moramo narediti liho razširitev funkcije in intervala na katerem integriramo. Torej je začetni pogoj
+
+\begin{equation}
+    T(x, 0) \propto \exp{\left(-\frac{(x-a)^2}{2\sigma^2}\right)} - \exp{\left(-\frac{(x+a)^2}{2\sigma^2}\right)}\>.
+\end{equation}
+
+Rišemo še vedno za isti interval, le da smo zdaj s tem trikom dobili robni pogoj $T(0, t) = T(a, t) = 0$. Dobimo sliko
+\ref{fig:5}.
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/S_Analytic_D.png}
+        \caption{Analitična rešitev, pri Dirichletovih robnih pogojih}
+    \label{fig:5}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/S_Analytic_D_Heatmap.png}
+        \caption{Še heatmap analitične rešitve, pri Dirichletovih robnih pogojih}
+    \label{fig:6}
+\end{figure}
 
 \section{Komentarji in izboljšave}
 

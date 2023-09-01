@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.8.9)  2 SEP 2023 00:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.8.9)  2 SEP 2023 00:30
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -535,7 +535,7 @@ Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 Package translations Info: no dictionary file `translations-basic-dictionary-slovenian.trsl' found. on input line 48.
-<logo.png, id=52, 220.67175pt x 141.22992pt>
+<logo.png, id=64, 220.67175pt x 141.22992pt>
 File: logo.png Graphic file (type png)
 <use logo.png>
 Package pdftex.def Info: logo.png  used on input line 51.
@@ -606,30 +606,68 @@ Underfull \hbox (badness 10000) in paragraph at lines 272--275
 
  []
 
-[5] [6] (main.bbl
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 277--279
+
+ []
+
+<./images/S_Analytic_P.png, id=140, 462.528pt x 346.896pt>
+File: ./images/S_Analytic_P.png Graphic file (type png)
+<use ./images/S_Analytic_P.png>
+Package pdftex.def Info: ./images/S_Analytic_P.png  used on input line 288.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+<./images/S_Analytic_P_Heatmap.png, id=141, 462.528pt x 346.896pt>
+File: ./images/S_Analytic_P_Heatmap.png Graphic file (type png)
+<use ./images/S_Analytic_P_Heatmap.png>
+Package pdftex.def Info: ./images/S_Analytic_P_Heatmap.png  used on input line 295.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+[6 <./images/S_Analytic_P.png>]
+<./images/S_Numeric_P.png, id=150, 462.528pt x 346.896pt>
+File: ./images/S_Numeric_P.png Graphic file (type png)
+<use ./images/S_Numeric_P.png>
+Package pdftex.def Info: ./images/S_Numeric_P.png  used on input line 307.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+ [7 <./images/S_Analytic_P_Heatmap.png>]
+<./images/S_Numeric_P_Heatmap.png, id=158, 462.528pt x 346.896pt>
+File: ./images/S_Numeric_P_Heatmap.png Graphic file (type png)
+<use ./images/S_Numeric_P_Heatmap.png>
+Package pdftex.def Info: ./images/S_Numeric_P_Heatmap.png  used on input line 314.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+ [8 <./images/S_Numeric_P.png> <./images/S_Numeric_P_Heatmap.png>]
+<./images/S_Analytic_D.png, id=167, 462.528pt x 346.896pt>
+File: ./images/S_Analytic_D.png Graphic file (type png)
+<use ./images/S_Analytic_D.png>
+Package pdftex.def Info: ./images/S_Analytic_D.png  used on input line 336.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+<./images/S_Analytic_D_Heatmap.png, id=168, 462.528pt x 346.896pt>
+File: ./images/S_Analytic_D_Heatmap.png Graphic file (type png)
+<use ./images/S_Analytic_D_Heatmap.png>
+Package pdftex.def Info: ./images/S_Analytic_D_Heatmap.png  used on input line 343.
+(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
+ [9 <./images/S_Analytic_D.png>] [10 <./images/S_Analytic_D_Heatmap.png>] (main.bbl
 
 LaTeX Warning: Empty `thebibliography' environment on input line 3.
 
-) [7] (main.aux)
+) [11] (main.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-06-30>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 51A18048A4C72A764CCD0AF1570D5907;1444.
+(rerunfilecheck)             Checksum: 974EC468C49D44D2418FE8E51D133A11;1981.
  ) 
 Here is how much of TeX's memory you used:
- 20146 strings out of 475550
- 389793 string characters out of 5759194
- 1939238 words of memory out of 5000000
- 41101 multiletter control sequences out of 15000+600000
+ 20223 strings out of 475550
+ 391793 string characters out of 5759194
+ 1940238 words of memory out of 5000000
+ 41164 multiletter control sequences out of 15000+600000
  561434 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  77i,10n,79p,360b,942s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on main.pdf (8 pages, 184682 bytes).
+Output written on main.pdf (12 pages, 546677 bytes).
 PDF statistics:
- 191 PDF objects out of 1000 (max. 8388607)
- 37 named destinations out of 1000 (max. 500000)
- 106 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 246 PDF objects out of 1000 (max. 8388607)
+ 51 named destinations out of 1000 (max. 500000)
+ 160 words of extra memory for PDF output out of 10000 (max. 10000000)
 

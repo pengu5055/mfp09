@@ -9,5 +9,8 @@
 \contentsline {subsection}{\numberline {3.3}MPI\_Node}{5}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}GatherStatistics}{5}{subsection.3.4}%
 \contentsline {section}{\numberline {4}Rezultati}{6}{section.4}%
-\contentsline {section}{\numberline {5}Komentarji in izboljšave}{6}{section.5}%
-\contentsline {section}{Literatura}{7}{section*.2}%
+\contentsline {subsection}{\numberline {4.1}Fourierova metoda}{6}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Periodični robni pogoji}{6}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Dirichletovi robni pogoji}{9}{subsubsection.4.1.2}%
+\contentsline {section}{\numberline {5}Komentarji in izboljšave}{10}{section.5}%
+\contentsline {section}{Literatura}{11}{section*.8}%
