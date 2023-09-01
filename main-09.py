@@ -37,50 +37,22 @@ sol2 = np.flip(sol2, axis=0)
 # Plot the solution
 plt.rcParams.update({'font.family': 'Verdana'})
 fig, ax = plt.subplots(facecolor="#4d4c4c")
-norm = plt.Normalize(vmin=-np.min(t_points), vmax=-np.max(t_points))
-# norm = mpl.colors.LogNorm(vmin=0.01, vmax=12)
-cm = cmr.ocean(np.linspace(0, 1, len(t_points)))
-for i, sol in enumerate(sol1):
-        ax.plot(solverS.x, sol, c=cm[i], alpha=0.3)
-cm2 = cmr.sepia(np.linspace(0, 1, len(t_points)))
-for i, sol in enumerate(sol2):
-        ax.plot(solverS.x, sol, c=cm2[i], alpha=0.3)
 
-scalar_Mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmr.ocean)
-scalar_Mappable2 = plt.cm.ScalarMappable(norm=norm, cmap=cmr.sepia)
+diff = np.abs(np.mean(sol2, axis=1) - np.mean(sol1, axis=1))
+ax.plot(t_points, diff, c="#a8325e")
 
 
-ax.set_xlabel(r"$x\>[arb. units]$")
-ax.set_ylabel(r"$T\>[arb. units]$")
+
+ax.set_xlabel(r"$t\>[arb. units]$")
+ax.set_ylabel(r"abs. error")
 
 ax.autoscale()
 # Hardcoded limits for now. Just clear a little of the buffer due to edge divergence.
-ax.set_xlim(0, 10)
-ax.set_ylim(-0.25, 1.25)
+ax.set_xlim(0, 2)
+ax.set_ylim(-0.1, 0.25)
 # ax.set_ylim(np.min(self.solution), np.max(self.solution))
-
-plt.suptitle("Comparison of Spectral and Colocation method", color="#dedede")
-
-# Make it dark
+plt.suptitle("Absolute error between Spectral and Colocation mean solution", color="#dedede")
 ax.set_facecolor("#bababa")
-cb = plt.colorbar(scalar_Mappable, ax=ax, label=r"$t\>[arb. units]$",
-                orientation="vertical")
-cb.set_label(r"$t\>[arb. units]$", color="#dedede")
-cb.ax.xaxis.set_tick_params(color="#dedede")
-cb.ax.yaxis.set_tick_params(color="#dedede")
-ticks = -1*cb.ax.get_yticks()  # *-1 to get the correct values otherwise they are inverted
-cb.ax.set_yticklabels(ticks)
-cb.ax.tick_params(axis="x", colors="#dedede")
-cb.ax.tick_params(axis="y", colors="#dedede")
-cb2 = plt.colorbar(scalar_Mappable2, ax=ax, label=r"$t\>[arb. units]$",
-                orientation="vertical")
-cb2.set_label(r"$t\>[arb. units]$", color="#dedede")
-cb2.ax.xaxis.set_tick_params(color="#dedede")
-cb2.ax.yaxis.set_tick_params(color="#dedede")
-ticks = -1*cb2.ax.get_yticks()  # *-1 to get the correct values otherwise they are inverted
-cb2.ax.set_yticklabels(ticks)
-cb2.ax.tick_params(axis="x", colors="#dedede")
-cb2.ax.tick_params(axis="y", colors="#dedede")
 plt.grid(c="#d1d1d1", alpha=0.5)
 ax.spines['bottom'].set_color("#dedede")
 ax.spines['top'].set_color("#dedede")
@@ -91,7 +63,5 @@ ax.yaxis.label.set_color("#dedede")
 ax.tick_params(axis="x", colors="#dedede")
 ax.tick_params(axis="y", colors="#dedede")
 ax.axhline(0, linestyle="--", color="#dedede")
-plt.subplots_adjust(right=1)
+#plt.subplots_adjust(right=1)
 plt.show()
-
-
