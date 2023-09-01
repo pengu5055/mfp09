@@ -345,6 +345,74 @@ Rišemo še vedno za isti interval, le da smo zdaj s tem trikom dobili robni pog
     \label{fig:6}
 \end{figure}
 
+Tukaj se temperatura zmanjšuje in se ustali na $0$ (kar je seveda pričakovano). Z numeričnim izračunom se nisem ukvarjal,
+saj sem bil že od peridičnih robnih pogojev dovolj razočaran.\\
+
+\subsection{Metoda končnih elementov}
+Zdaj pa poglejmo še rezultate za metodo končnih elementov, oz. kolokacijskim pogojem. Poglejmo si najprej rezultate
+za metodo kjer sem uporabil vgrajene knjižnice
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/C_Proper.png}
+        \caption{Knjižnična rešitev, pri periodičnih robnih pogojih}
+    \label{fig:7}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/C_Proper_Heatmap.png}
+        \caption{Še heatmap knjižnične rešitve, pri periodičnih robnih pogojih}
+    \label{fig:8}
+\end{figure}
+
+\subsection{Primerjava metod}
+Želim si, da bi lahko bolj natančno primerjal obe metodi, ampak žal mi to ni uspelo. Najbolj me je presenetilo to,
+da je metoda s kolokacijo prišla do rezultatov, ki so praktično identični analitični rešitvi z spektralno metodo, a
+s ključno razliko. Pri kolokacijski metodi se rešitev ustali po okoli $0.16$ arbitrarnih enot, pri spektralni metodi
+pa pri okoli $12.0$ arbitrarnih enot. To je več redov velikosti razlike in to pri istih parametrih. Želim si, da bi
+to čudnost lahko raziskal in mogoče celo znal pojasnit, ampak se moram žal spet sklicat na to, da nimam časa.\\
+
+Vseeno sem poskusil narisati neko primerjavo za neke srednje parametre $N=1000$, $D=1e-3$, $a=5$, $\sigma=1$ in $t=2$.
+Rezultati so na sliki \ref{fig:9}.
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/Comparison.png}
+        \caption{Primerjava metod (modra, spektralna metoda, oranžna, kolokacijska metoda)}
+    \label{fig:9}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/Abs_Error.png}
+        \caption{Absolutna napaka mediane rešitve obeh metod}
+\label{fig:10}  
+\end{figure}
+
+Ne vem če je to že preveč fabricated parameter, ampak če pogledamo absolutno napako mediane rešitve obeh metod, vidimo,
+da se rešitvi pravzaprav ujemata kar precej dobro in šele proti koncu pride do razcepa. 
+
+\subsection{Paralelizacija}
+Za konec pa še paralelizacija. Želel sem dobiti neko značilno premico v log-log skali, ki bi pokazala na uspešno
+paralelizacijo. Dobil sem slednje slike \ref{fig:11} in \ref{fig:12}.
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/C_Manual_MPI_scaling.png}
+        \caption{Čas izvajanja v odvisnosti od števila procesov}
+\label{fig:11}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\linewidth]{./images/C_Proper_MPI_scaling.png}
+        \caption{Čas izvajanja v odvisnosti od števila procesov}
+\label{fig:12}
+\end{figure}
+
+
+
 \section{Komentarji in izboljšave}
 
 \newpage

@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 0 "main.aux" "main.bbl" "main" 1693607417 -1
+["bibtex main"] 1693608632 "main.aux" "main.bbl" "main" 1693608635 0
   "./sources.bib" 1693580566 585 59db498271dfb5e1811a288748c6fc20 ""
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/unsrt.bst" 1291868336 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "main.aux" 1693607416 4301 927b0d238c5cff9e28e1ed5e60d29fa3 "pdflatex"
+  "main.aux" 1693608635 6458 6bb14f483f45dc13ca1bcfbd2a92c840 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1693607414 "e:/FormerSSD/Backup/Documents/FMF/3. Letnik (Dodatno Leto)/Mafijski Praktikum cont/DN9/main.tex" "main.pdf" "main" 1693607417 0
+["pdflatex"] 1693608633 "e:/FormerSSD/Backup/Documents/FMF/3. Letnik (Dodatno Leto)/Mafijski Praktikum cont/DN9/main.tex" "main.pdf" "main" 1693608635 0
   "C:/Users/Marko Urbanc/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1691572293 81068 299f700eb05b1217173e62b88b513bd0 ""
   "C:/Users/Marko Urbanc/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1691572099 24122251 e939fd6a89cc5679b97085233755a785 ""
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1233955448 1004 54797486969f23fa377b128694d548df ""
@@ -117,7 +117,13 @@
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388494052 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1656236890 56148 51a9a8571c07b9921892ae11063ae853 ""
   "C:/Users/Marko Urbanc/AppData/Local/Programs/MiKTeX/tex/latex/xstring/xstring.sty" 1673965817 123 a302f2c651a95033260db60e51527ae8 ""
-  "e:/FormerSSD/Backup/Documents/FMF/3. Letnik (Dodatno Leto)/Mafijski Praktikum cont/DN9/main.tex" 1693607416 14913 67bf6d780c20bacd0aec8e2a51b2ba50 ""
+  "e:/FormerSSD/Backup/Documents/FMF/3. Letnik (Dodatno Leto)/Mafijski Praktikum cont/DN9/main.tex" 1693608629 17788 9df46a579979343c483388a7ac3cfd7d ""
+  "images/Abs_Error.png" 1693529081 27476 0f2cd94e623ac4bc793a3b5f726ba092 ""
+  "images/C_Manual_MPI_scaling.png" 1693580220 30404 7fd57697442c4188c49bed11d5478f73 ""
+  "images/C_Proper.png" 1693527072 63126 1d4e7ee674d820601809c2c6bdaf8280 ""
+  "images/C_Proper_Heatmap.png" 1693527110 57910 80e5486602dfa087fe8043268796bf43 ""
+  "images/C_Proper_MPI_scaling.png" 1693580269 30631 edcf479039a9f7c40f10c73936185ed8 ""
+  "images/Comparison.png" 1693528040 87700 5dfb58442f5d4764ddf1e65f8ea59ef9 ""
   "images/S_Analytic_D.png" 1693524593 63457 42188155dc81e5a545001913a86dcadd ""
   "images/S_Analytic_D_Heatmap.png" 1693524603 54601 aa7b4da46f58852f8f7b168358ad8355 ""
   "images/S_Analytic_P.png" 1693525798 60718 de3698034e7e96f96d6e9d557cc080cf ""
@@ -125,11 +131,11 @@
   "images/S_Numeric_P.png" 1693525078 115106 c8c8b2e8a32e05c36b94adfdf0a5a0d8 ""
   "images/S_Numeric_P_Heatmap.png" 1693525352 94154 2e349716c0cbb4b2775910f5442bfdb1 ""
   "logo.png" 1693580566 8303 8f7f5965ff153bbc45aecaef5ccdb0ac ""
-  "main.aux" 1693607416 4301 927b0d238c5cff9e28e1ed5e60d29fa3 "pdflatex"
-  "main.bbl" 1693607059 52 0eba253fc001332e731e8aba3f23127b "bibtex main"
-  "main.out" 1693607416 1981 974ec468c49d44d2418fe8e51d133a11 "pdflatex"
-  "main.tex" 1693607416 14913 67bf6d780c20bacd0aec8e2a51b2ba50 ""
-  "main.toc" 1693607416 1200 601061a6ed41f3d668f971dd4cb1c615 "pdflatex"
+  "main.aux" 1693608635 6458 6bb14f483f45dc13ca1bcfbd2a92c840 "pdflatex"
+  "main.bbl" 1693608632 52 0eba253fc001332e731e8aba3f23127b "bibtex main"
+  "main.out" 1693608635 2438 b82824a5720daf2358f83693a4c4e043 "pdflatex"
+  "main.tex" 1693608629 17788 9df46a579979343c483388a7ac3cfd7d ""
+  "main.toc" 1693608635 1457 c2dfafd056c399d45468a7fd08cf1249 "pdflatex"
   (generated)
   "main.aux"
   "main.log"
