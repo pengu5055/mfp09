@@ -25,7 +25,7 @@ Več kot to, v tem trenutku ne morem povedati. Žal sem predolgo časa čakal, d
 Vseeno pa priporočam, da si najprej sam poskusiš rešiti nalogo. As always za vprašanja sem na voljo.
 
 
-* [**Poročilo DN9**]({% link fmf-pdf/year3/mfp/Marko_Urbanč_09.pdf %})
+* [**Poročilo DN9**](https://pengu5055.github.io/fmf-pdf/year3/mfp/Marko_Urban%C4%8D_09.pdf)
 * [**Source repozitorij DN9**](https://github.com/pengu5055/mfp09)
 
 Priznam, da zna biti source repozitorij nekoliko kaotičen. Over time sem se naučil boljše prakse. Zdi se mi, da je tole glavni `.py` file.
